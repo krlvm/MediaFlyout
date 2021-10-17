@@ -1,0 +1,21 @@
+﻿<Window x:Class="MediaFlyout.FlyoutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MediaFlyout"
+        xmlns:p = "clr-namespace:MediaFlyout.Properties"
+        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+        mc:Ignorable="d"
+        Title="{x:Static p:Resources.Window_Title}" SizeToContent="Height"
+        Height="450" Width="450" ResizeMode="NoResize" UseLayoutRounding="False"
+        WindowStyle="None" BorderThickness="0" BorderBrush="#30AAAAAA"
+        Visibility="Hidden" ShowInTaskbar="False" PreviewKeyDown="Window_PreviewKeyDown"
+        Loaded="Window_Loaded" Deactivated="Window_Deactivated" Closing="Window_Closing"
+        fw:AcrylicWindow.Enabled="True"
+        fw:AcrylicWindow.NoiseOpacity="{DynamicResource FlyoutNoiseOpacity}" fw:AcrylicWindow.AcrylicWindowStyle="None" fw:AcrylicWindow.AcrylicAccentState="{DynamicResource FlyoutAccentState}"
+        fw:AcrylicWindow.TintColor="{DynamicResource FlyoutTintColor}" fw:AcrylicWindow.TintOpacity="{DynamicResource FlyoutTintOpacity}">
+    <Grid>
+        <StackPanel Margin="0,8" x:Name="SessionsStackPanel" />
+    </Grid>
+</Window>

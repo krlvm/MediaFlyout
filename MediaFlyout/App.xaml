@@ -1,0 +1,29 @@
+﻿<Application x:Class="MediaFlyout.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MediaFlyout"
+             StartupUri="FlyoutWindow.xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--  FluentWPF Controls  -->
+                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Controls.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="MetroFocusVisualStyle">
+                <Setter Property="Control.Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Rectangle Margin="-4" StrokeThickness="2" Stroke="{DynamicResource FlyoutContrastColor}"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="{x:Type Control}">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource MetroFocusVisualStyle}" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

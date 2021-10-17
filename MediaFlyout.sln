@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaFlyout", "MediaFlyout\MediaFlyout.csproj", "{A2EEB323-2B15-4C26-B760-122D96987016}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2EEB323-2B15-4C26-B760-122D96987016}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2EEB323-2B15-4C26-B760-122D96987016}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2EEB323-2B15-4C26-B760-122D96987016}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2EEB323-2B15-4C26-B760-122D96987016}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F0863E00-76E1-4E57-96D9-3493CF8F632D}
+	EndGlobalSection
+EndGlobal
