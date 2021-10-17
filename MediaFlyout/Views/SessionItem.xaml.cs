@@ -129,7 +129,7 @@ namespace MediaFlyout.Views
             }
             else
             {
-                model.Thumbnail = model.AppIcon;
+                model.Thumbnail = null;
             }
         }
 
