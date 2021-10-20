@@ -53,8 +53,18 @@ namespace MediaFlyout
             }
 
             tray.Visible = true;
-            tray.Icon = icons[(bool)isPlaying ? 0 : 1];
             tray.Text = (bool)isPlaying ? Resources.Tray_Pause : Resources.Tray_Play;
+
+            try
+            {
+                tray.Icon = icons[(bool)isPlaying ? 0 : 1];
+            }
+            catch (ObjectDisposedException)
+            {
+                // The icon has been disposed
+                // Generate another one
+                SetIconColor(trayIconColor, true);
+            }
         }
 
         #region Click Handlers
@@ -81,9 +91,9 @@ namespace MediaFlyout
 
         #region Icon Management
 
-        public void SetIconColor(Color color)
+        public void SetIconColor(Color color, bool force = false)
         {
-            if (trayIconColor == color) return;
+            if (trayIconColor == color && !force) return;
             trayIconColor = SystemParameters.HighContrast ? 
                 TrayIconHelper.TranslateColor(System.Windows.SystemColors.WindowTextColor) : color;
 
