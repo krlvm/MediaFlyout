@@ -101,7 +101,7 @@ namespace MediaFlyout
             {
                 if (icon != null)
                 {
-                    tray.Icon.Dispose();
+                    icon.Dispose();
                 }
             }
 
