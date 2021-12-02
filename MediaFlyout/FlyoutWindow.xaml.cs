@@ -231,7 +231,7 @@ namespace MediaFlyout
                 else
                 {
                     Resources["FlyoutFallbackColor"] = Color.FromRgb(31, 31, 31);
-                    Resources["FlyoutTintColor"] = Color.FromRgb(36, 36, 36);
+                    Resources["FlyoutTintColor"] = Acrylic_IsEnabled() ? Color.FromRgb(36, 36, 36) : Color.FromRgb(31, 31, 31);
                     tintOpacity = 0.85;
                 }
                 Resources["FlyoutTintOpacity"] = Acrylic_IsEnabled() ? tintOpacity : 1;

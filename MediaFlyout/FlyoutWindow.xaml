@@ -14,7 +14,7 @@
         Loaded="Window_Loaded" Deactivated="Window_Deactivated" Closing="Window_Closing"
         fw:AcrylicWindow.Enabled="True"
         fw:AcrylicWindow.NoiseOpacity="{DynamicResource FlyoutNoiseOpacity}" fw:AcrylicWindow.AcrylicWindowStyle="None" fw:AcrylicWindow.AcrylicAccentState="{DynamicResource FlyoutAccentState}"
-        fw:AcrylicWindow.TintColor="{DynamicResource FlyoutTintColor}" fw:AcrylicWindow.TintOpacity="{DynamicResource FlyoutTintOpacity}">
+        fw:AcrylicWindow.TintColor="{DynamicResource FlyoutTintColor}" fw:AcrylicWindow.TintOpacity="{DynamicResource FlyoutTintOpacity}" fw:AcrylicWindow.FallbackColor="{DynamicResource FlyoutFallbackColor}">
     <Grid>
         <StackPanel Margin="0,8" x:Name="SessionsStackPanel" />
     </Grid>
