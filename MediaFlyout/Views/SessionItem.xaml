@@ -23,9 +23,9 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    
+
     <StackPanel Margin="8,6" Focusable="True" FocusVisualStyle="{StaticResource MetroFocusVisualStyle}">
-        <Grid>
+        <Grid fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64" />
                 <ColumnDefinition Width="*" />
@@ -85,7 +85,7 @@
                 <TextBlock Grid.Row="1" x:Name="MediaTitle" FontSize="14" Text="{Binding Title, FallbackValue='Media Title'}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SystemBaseHighColorBrush}" />
                 <TextBlock Grid.Row="2" x:Name="MediaArtist" FontSize="12" Text="{Binding Artist, FallbackValue='Media Artist'}" Foreground="{DynamicResource SystemBaseMediumHighColorBrush}" />
             </Grid>
-            <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Height="40" fw:PointerTracker.Enabled="True" Margin="4,0">
+            <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Height="40" Margin="4,0">
                 <Button x:Name="Previous" Content="&#xE892;" FontFamily="Segoe MDL2 Assets" FontSize="12" Width="40" IsEnabled="{Binding IsPreviousEnabled}" Click="Previous_Click" Style="{StaticResource FluentButton}" />
                 <Button x:Name="PlayPause" Content="{Binding ToggleButton, FallbackValue=''}" FontFamily="Segoe MDL2 Assets" FontSize="18" Width="40" IsEnabled="{Binding IsPlayPauseEnabled}" Click="PlayPause_Click" Margin="2,0" Style="{StaticResource FluentButton}" />
                 <Button x:Name="Next" Content="&#xE893;" FontFamily="Segoe MDL2 Assets" FontSize="12" Width="40" IsEnabled="{Binding IsNextEnabled}" Click="Next_Click" Style="{StaticResource FluentButton}" />

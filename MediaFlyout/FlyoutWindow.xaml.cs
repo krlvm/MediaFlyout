@@ -244,11 +244,13 @@ namespace MediaFlyout
             {
                 Resources["FlyoutNoiseOpacity"] = 0.025;
                 Resources["FlyoutAccentState"] = AcrylicAccentState.BlurBehind;
+                Resources["FluentRevealEnabled"] = true;
             }
             else
             {
                 Resources["FlyoutNoiseOpacity"] = 0.00000001;
                 Resources["FlyoutAccentState"] = AcrylicAccentState.Disabled;
+                Resources["FluentRevealEnabled"] = false;
             }
         }
 
