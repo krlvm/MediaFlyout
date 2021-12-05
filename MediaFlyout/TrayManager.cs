@@ -69,7 +69,7 @@ namespace MediaFlyout
 
         #region Click Handlers
 
-        private void OnClick(object sender, EventArgs args)
+        private void OnClick(object sender, MouseEventArgs args)
         {
             if (isClosing) return;
 
@@ -79,10 +79,11 @@ namespace MediaFlyout
                 return;
             }
 
-            AnimationHelper.ShowFlyout(flyout);
+            flyout.Topmost = false;
+            AnimationHelper.ShowFlyout(flyout, args.Button == MouseButtons.Right);
         }
 
-        private void OnDoubleClick(object sender, EventArgs args)
+        private void OnDoubleClick(object sender, MouseEventArgs args)
         {
             flyout.TogglePlayback();
         }

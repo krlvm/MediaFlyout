@@ -9,7 +9,7 @@ namespace MediaFlyout.Helpers
     {
         private const double ANIMATION_TIME = 0.25;
 
-        public static void ShowFlyout<T>(T window) where T : Window, IFlyout
+        public static void ShowFlyout<T>(T window, bool topmost = false) where T : Window, IFlyout
         {
             DependencyProperty property;
             double from, to;
@@ -101,7 +101,11 @@ namespace MediaFlyout.Helpers
             sb.FillBehavior = FillBehavior.Stop;
             sb.Children.Add(entraceAnimation);
             sb.Children.Add(fadeAnimation);
-            sb.Completed += (object sender, EventArgs e) => window.Focus();
+            sb.Completed += (object sender, EventArgs e) =>
+            {
+                window.Topmost = topmost;
+                window.Focus();
+            };
 
             sb.Begin(window);
         }

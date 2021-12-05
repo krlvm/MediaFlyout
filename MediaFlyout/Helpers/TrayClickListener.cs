@@ -8,27 +8,27 @@ namespace MediaFlyout.Helpers
     {
         private bool isSingleClick = false;
 
-        public event EventHandler Click;
-        public event EventHandler DoubleClick;
+        public event MouseEventHandler Click;
+        public event MouseEventHandler DoubleClick;
 
         public TrayClickListener(NotifyIcon notifyIcon)
         {
-            notifyIcon.Click += Icon_OnClick;
+            notifyIcon.MouseClick += Icon_OnClick;
             notifyIcon.DoubleClick += Icon_OnDoubleClick;
         }
 
-        private async void Icon_OnClick(object sender, EventArgs args)
+        private async void Icon_OnClick(object sender, MouseEventArgs args)
         {
             isSingleClick = true;
             await Task.Delay(TimeSpan.FromMilliseconds(SystemInformation.DoubleClickTime / 4));
 
             if (isSingleClick)
             {
-                Click?.Invoke(this, null);
+                Click?.Invoke(this, args);
             }
             else
             {
-                DoubleClick?.Invoke(this, null);
+                DoubleClick?.Invoke(this, args);
             }
         }
 
