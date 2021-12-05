@@ -20,6 +20,7 @@ Tray icon is hidden when there's no media is playing.
 
 ### Features
 * Double Click on tray icon to pause all media or play the last paused element
+* Right Click on tray icon to show flyout on top
 * Supports showing accent color on surface
 * Fluent Design support, including acrylic transparency
 
