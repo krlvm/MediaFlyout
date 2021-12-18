@@ -7,7 +7,7 @@ namespace MediaFlyout.Helpers
 {
     class AnimationHelper
     {
-        private const double ANIMATION_TIME = 0.25;
+        private const double ANIMATION_TIME = 0.2;
 
         public static void ShowFlyout<T>(T window, bool topmost = false) where T : Window, IFlyout
         {
