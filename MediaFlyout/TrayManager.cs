@@ -103,6 +103,7 @@ namespace MediaFlyout
                 if (icon != null)
                 {
                     icon.Dispose();
+                    NativeMethods.DestroyIcon(icon.Handle);
                 }
             }
 
@@ -114,7 +115,7 @@ namespace MediaFlyout
 
         private static Icon GetIcon(bool isPlaying, Color color)
         {
-#if TRUE
+#if FALSE
             return LoadIcon(isPlaying, color);
 #else
             return MakeIcon(isPlaying, color);
@@ -133,37 +134,49 @@ namespace MediaFlyout
             return icon;
         }
 
-        // https://stackoverflow.com/a/36379999
+        private const int ICON_SIZE = 16;
+        private static readonly Font ICON_FONT = new Font("Segoe MDL2 Assets", 14, System.Drawing.FontStyle.Regular, GraphicsUnit.Point);
         private static Icon MakeIcon(bool isPlaying, Color color)
         {
             var str = isPlaying ? "" : "";
-            using (var font = new Font("Segoe MDL2 Assets", 16, System.Drawing.FontStyle.Regular, GraphicsUnit.Pixel))
-            {
-                using (var bmp = new Bitmap(16, 16))
-                {
-                    using (var g = Graphics.FromImage(bmp))
-                    {
-                        if (color == Color.White)
-                        {
-                            // When System Theme is Dark
-                            g.SmoothingMode = SmoothingMode.AntiAlias;
-                            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        }
 
-                        g.Clear(Color.Transparent);
-#if TRUE
-                        using (var brush = new SolidBrush(color))
-                        {
-                            g.DrawString(str, font, brush, -4, 0);
-                        }
-#else
-                        TextRenderer.DrawText(g, str, font, new Rectangle(0, 0, 16, 16), color, Color.Transparent);
-#endif
-                        //bmp.Save(@"%UserProfile%\Desktop\MFIcon.png", System.Drawing.Imaging.ImageFormat.Png);
-                        IntPtr hIcon = bmp.GetHicon();
-                        return Icon.FromHandle(hIcon);
+            float dpiX;
+            int dpiW, dpiH;
+
+            using (var bitmap = new Bitmap(1, 1))
+            {
+                using (var g = Graphics.FromImage(bitmap))
+                {
+                    dpiX = g.DpiX;
+                    var pixelSize = g.MeasureString(str, ICON_FONT);
+                    dpiW = (int) Math.Round(pixelSize.Width);
+                    dpiH = (int) Math.Round(pixelSize.Height);
+                }
+            }
+
+            int size = (int) Math.Round(ICON_SIZE * (dpiX / 96f));
+            using (var bmp = new Bitmap(size, size))
+            {
+                using (var g = Graphics.FromImage(bmp))
+                {
+                    if (color == Color.White || true)
+                    {
+                        // When System Theme is Dark
+                        g.SmoothingMode = SmoothingMode.AntiAlias;
+                        g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                     }
+#if TRUE
+                    using (var brush = new SolidBrush(color))
+                    {
+                        g.DrawString(str, ICON_FONT, brush, (size - dpiW) / 2, (size - dpiH) / 2);
+                    }
+#else
+                    TextRenderer.DrawText(g, str, font, new Rectangle(0, 0, 16, 16), color, Color.Transparent);
+#endif
+                    //bmp.Save(@"%UserProfile%\Desktop\MFIcon.png", System.Drawing.Imaging.ImageFormat.Png);
+                    IntPtr hIcon = bmp.GetHicon();
+                    return Icon.FromHandle(hIcon);
                 }
             }
         }
