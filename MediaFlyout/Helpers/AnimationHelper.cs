@@ -51,8 +51,10 @@ namespace MediaFlyout.Helpers
 
             //window.IsRaising = true;
             BringTaskbarToFront();
-            window.Visibility = Visibility.Visible;
+            if (property == Window.TopProperty) window.Top = 999999; else window.Left = 999999;
             window.WindowStyle = WindowStyle.SingleBorderWindow;
+            window.Visibility = Visibility.Visible;
+            System.Threading.Thread.Sleep(1);
             window.Activate();
             InteropHelper.CloakWindow(window, false);
 

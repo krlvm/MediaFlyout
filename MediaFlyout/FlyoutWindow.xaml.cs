@@ -46,7 +46,7 @@ namespace MediaFlyout
 
         private void PrepareWindow()
         {
-            Left = 99999;
+            Left = 999999;
             Show();
             Hide();
         }
@@ -87,10 +87,11 @@ namespace MediaFlyout
         public async void DismissFlyout()
         {
             if (Visibility == Visibility.Hidden) return;
-            WindowStyle = WindowStyle.None;
-            Visibility = Visibility.Hidden;
+            Left = 999999;
             tray.isClosing = true;
             await System.Threading.Tasks.Task.Delay(System.Windows.Forms.SystemInformation.DoubleClickTime / 2);
+            WindowStyle = WindowStyle.None;
+            Visibility = Visibility.Hidden;
             tray.isClosing = false;
         }
 
