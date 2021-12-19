@@ -7,7 +7,7 @@ namespace MediaFlyout.Helpers
 {
     class AnimationHelper
     {
-        private const double ANIMATION_TIME = 0.2;
+        private const double ANIMATION_TIME = 0.25;
 
         public static void ShowFlyout<T>(T window, bool topmost = false) where T : Window, IFlyout
         {
@@ -49,13 +49,14 @@ namespace MediaFlyout.Helpers
                     throw new InvalidOperationException();
             }
 
-            //window.IsRaising = true;
+            window.IsRaising = true;
             BringTaskbarToFront();
             if (property == Window.TopProperty) window.Top = 999999; else window.Left = 999999;
             window.WindowStyle = WindowStyle.SingleBorderWindow;
             window.Visibility = Visibility.Visible;
             System.Threading.Thread.Sleep(1);
             window.Activate();
+            BringTaskbarToFront();
             InteropHelper.CloakWindow(window, false);
 
             if (!SystemParameters.MenuAnimation)
@@ -71,14 +72,14 @@ namespace MediaFlyout.Helpers
             }
 
             var easingMode = to - from > 0 ? EasingMode.EaseOut : EasingMode.EaseIn;
-            easingMode = EasingMode.EaseOut;
+            easingMode = EasingMode.EaseInOut;
 
             var entraceAnimation = new DoubleAnimation
             {
                 Duration = TimeSpan.FromSeconds(ANIMATION_TIME),
                 From = from,
                 To = to,
-                EasingFunction = new ExponentialEase
+                EasingFunction = new CircleEase
                 {
                     EasingMode = easingMode
                 }
@@ -89,9 +90,9 @@ namespace MediaFlyout.Helpers
             var fadeAnimation = new DoubleAnimation
             {
                 Duration = TimeSpan.FromSeconds(ANIMATION_TIME),
-                From = 0.5,
+                From = 0.8,
                 To = 1,
-                EasingFunction = new ExponentialEase
+                EasingFunction = new CircleEase
                 {
                     EasingMode = easingMode
                 }
@@ -107,6 +108,10 @@ namespace MediaFlyout.Helpers
             {
                 window.Topmost = topmost;
                 window.Focus();
+                //BringTaskbarToFront();
+                //window.Activate();
+                //window.Focus();
+                window.IsRaising = false;
             };
 
             sb.Begin(window);
