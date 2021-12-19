@@ -49,7 +49,7 @@ namespace MediaFlyout.Helpers
                     throw new InvalidOperationException();
             }
 
-            //window.IsRaising = true;
+            window.IsRaising = true;
             BringTaskbarToFront();
             if (property == Window.TopProperty) window.Top = 999999; else window.Left = 999999;
             window.WindowStyle = WindowStyle.SingleBorderWindow;
@@ -107,10 +107,9 @@ namespace MediaFlyout.Helpers
             sb.Completed += (object sender, EventArgs e) =>
             {
                 window.Topmost = topmost;
-                window.Focus();
                 //BringTaskbarToFront();
-                //window.Activate();
-                //window.Focus();
+                window.Focus();
+                window.Activate();
                 window.IsRaising = false;
             };
 

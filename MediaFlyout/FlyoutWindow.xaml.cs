@@ -181,6 +181,8 @@ namespace MediaFlyout
         private const string ACCENT_SURFACE_VALUE = "ColorPrevalence";
         private bool theme_accentColorListening = false;
 
+        private bool bEnableFluentAcrylic = false;
+
         private void Theme_Initialize()
         {
             new CurrentUserRegistryWatcher(REG_PERSONALIZATION_KEY, ACCENT_SURFACE_VALUE).OnChange += Theme_AccentSurfaceChanged;
@@ -188,6 +190,7 @@ namespace MediaFlyout
 
             SystemTheme.ThemeChanged += Theme_ThemeChanged;
 
+            bEnableFluentAcrylic = RegistryHelper.GetCUKeyValueOrFalse(@"SOFTWARE\krlvm\MediaFlyout", "EnableFluentAcrylic");
             Theme_Apply();
         }
 
@@ -241,10 +244,20 @@ namespace MediaFlyout
                 tray.SetIconColor(System.Drawing.Color.White);
             }
 
-            if(Acrylic_IsEnabled())
+            if (Acrylic_IsEnabled())
             {
-                Resources["FlyoutNoiseOpacity"] = 0.025;
-                Resources["FlyoutAccentState"] = AcrylicAccentState.BlurBehind;
+                if (bEnableFluentAcrylic)
+                {
+                    Resources["FlyoutTintOpacity"] = ((double)Resources["FlyoutTintOpacity"])
+                        + (SystemTheme.WindowsTheme == WindowsTheme.Light ? -0.1 : -0.05);
+                    Resources["FlyoutNoiseOpacity"] = 0.025;
+                    Resources["FlyoutAccentState"] = AcrylicAccentState.AcrylicBlurBehind;
+                }
+                else
+                {
+                    Resources["FlyoutNoiseOpacity"] = 0.025;
+                    Resources["FlyoutAccentState"] = AcrylicAccentState.BlurBehind;
+                }
                 Resources["FluentRevealEnabled"] = true;
             }
             else
@@ -302,19 +315,7 @@ namespace MediaFlyout
 
         private bool Acrylic_IsEnabled()
         {
-            using (Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(REG_PERSONALIZATION_KEY))
-            {
-                if (key == null)
-                {
-                    return false;
-                }
-                int? val = key.GetValue(ACRYLIC_VALUE) as int?;
-                if (val == null)
-                {
-                    return false;
-                }
-                return val != 0;
-            }
+            return RegistryHelper.GetCUKeyValueOrFalse(REG_PERSONALIZATION_KEY, ACRYLIC_VALUE);
         }
 
         #endregion
