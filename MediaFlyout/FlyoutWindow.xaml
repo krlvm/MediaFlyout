@@ -12,7 +12,7 @@
         WindowStyle="None" BorderThickness="0" BorderBrush="#30AAAAAA"
         Visibility="Hidden" ShowInTaskbar="False" PreviewKeyDown="Window_PreviewKeyDown"
         Loaded="Window_Loaded" Deactivated="Window_Deactivated" Closing="Window_Closing"
-        fw:AcrylicWindow.Enabled="True"
+        fw:AcrylicWindow.Enabled="True" fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}"
         fw:AcrylicWindow.NoiseOpacity="{DynamicResource FlyoutNoiseOpacity}" fw:AcrylicWindow.AcrylicWindowStyle="None" fw:AcrylicWindow.AcrylicAccentState="{DynamicResource FlyoutAccentState}"
         fw:AcrylicWindow.TintColor="{DynamicResource FlyoutTintColor}" fw:AcrylicWindow.TintOpacity="{DynamicResource FlyoutTintOpacity}" fw:AcrylicWindow.FallbackColor="{DynamicResource FlyoutFallbackColor}">
     <Grid>

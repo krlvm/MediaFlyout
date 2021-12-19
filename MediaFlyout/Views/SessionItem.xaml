@@ -25,7 +25,7 @@
     </UserControl.Resources>
 
     <StackPanel Margin="8,6" Focusable="True" FocusVisualStyle="{StaticResource MetroFocusVisualStyle}">
-        <Grid fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64" />
                 <ColumnDefinition Width="*" />
