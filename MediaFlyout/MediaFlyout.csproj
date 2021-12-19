@@ -180,19 +180,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\play.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\pause.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Tray_Play_100.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Tray_Pause_100.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Icon_Pause_100.ico" />
