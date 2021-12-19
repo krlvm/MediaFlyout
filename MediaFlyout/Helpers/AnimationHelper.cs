@@ -49,7 +49,7 @@ namespace MediaFlyout.Helpers
                     throw new InvalidOperationException();
             }
 
-            window.IsRaising = true;
+            //window.IsRaising = true;
             BringTaskbarToFront();
             if (property == Window.TopProperty) window.Top = 999999; else window.Left = 999999;
             window.WindowStyle = WindowStyle.SingleBorderWindow;
