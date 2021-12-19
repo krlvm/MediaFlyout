@@ -103,7 +103,7 @@ namespace MediaFlyout
                 if (icon != null)
                 {
                     icon.Dispose();
-                    NativeMethods.DestroyIcon(icon.Handle);
+                    //NativeMethods.DestroyIcon(icon.Handle);
                 }
             }
 
