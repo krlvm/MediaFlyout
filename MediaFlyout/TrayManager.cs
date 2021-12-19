@@ -115,7 +115,7 @@ namespace MediaFlyout
 
         private static Icon GetIcon(bool isPlaying, Color color)
         {
-#if FALSE
+#if TRUE
             return LoadIcon(isPlaying, color);
 #else
             return MakeIcon(isPlaying, color);
@@ -124,7 +124,11 @@ namespace MediaFlyout
 
         private static Icon LoadIcon(bool isPlaying, Color color)
         {
-            Icon icon = isPlaying ? Resources.Icon_Pause : Resources.Icon_Play;
+            double dpi = Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth;
+
+            Icon icon = isPlaying ? 
+                (dpi == 1 ? Resources.Icon_Pause_100 : Resources.Icon_Pause) :
+                (dpi == 1 ? Resources.Icon_Play_100  : Resources.Icon_Play);
             if (color != Color.White)
             {
                 Icon newIcon = TrayIconHelper.ColorIcon(icon, 1, color);

@@ -73,9 +73,29 @@ namespace MediaFlyout.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        public static System.Drawing.Icon Icon_Pause_100 {
+            get {
+                object obj = ResourceManager.GetObject("Icon_Pause_100", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         public static System.Drawing.Icon Icon_Play {
             get {
                 object obj = ResourceManager.GetObject("Icon_Play", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        public static System.Drawing.Icon Icon_Play_100 {
+            get {
+                object obj = ResourceManager.GetObject("Icon_Play_100", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
