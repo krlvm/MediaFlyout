@@ -181,6 +181,7 @@ namespace MediaFlyout
         private const string ACCENT_SURFACE_VALUE = "ColorPrevalence";
         private bool theme_accentColorListening = false;
 
+        private int OS_BUILD_NUMBER = SystemHelper.GetBuildNumber();
         private bool bEnableFluentAcrylic = false;
 
         private void Theme_Initialize()
@@ -212,7 +213,7 @@ namespace MediaFlyout
                 }
             }
 
-            if (SystemTheme.WindowsTheme == WindowsTheme.Light)
+            if (Theme_GetSystemTheme() == WindowsTheme.Light)
             {
                 ResourceDictionaryEx.GlobalTheme = ElementTheme.Light;
                 Resources["FlyoutFallbackColor"] = Color.FromRgb(228, 228, 228);
@@ -249,7 +250,7 @@ namespace MediaFlyout
                 if (bEnableFluentAcrylic)
                 {
                     Resources["FlyoutTintOpacity"] = ((double)Resources["FlyoutTintOpacity"])
-                        + (SystemTheme.WindowsTheme == WindowsTheme.Light ? -0.1 : -0.05);
+                        + (Theme_GetSystemTheme() == WindowsTheme.Light ? -0.1 : -0.05);
                     Resources["FlyoutNoiseOpacity"] = 0.025;
                     Resources["FlyoutAccentState"] = AcrylicAccentState.AcrylicBlurBehind;
                 }
@@ -301,6 +302,12 @@ namespace MediaFlyout
                 }
                 return val != 0;
             }
+        }
+
+        private WindowsTheme Theme_GetSystemTheme()
+        {
+            if (OS_BUILD_NUMBER < 18282) return WindowsTheme.Dark;
+            return SystemTheme.WindowsTheme;
         }
 
         private const string ACRYLIC_VALUE = "EnableTransparency";

@@ -102,6 +102,7 @@
     <Compile Include="AppInformation\SourceModernAppInfo.cs" />
     <Compile Include="Helpers\InteropHelper.cs" />
     <Compile Include="Helpers\RegistryHelper.cs" />
+    <Compile Include="Helpers\SystemHelper.cs" />
     <Compile Include="Helpers\TrayClickListener.cs" />
     <Compile Include="Helpers\TrayIconHelper.cs" />
     <Compile Include="Helpers\WindowsTaskbar.cs" />
