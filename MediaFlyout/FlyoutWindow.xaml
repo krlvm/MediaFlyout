@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="{x:Static p:Resources.Window_Title}" SizeToContent="Height"
         Height="450" Width="450" ResizeMode="NoResize" UseLayoutRounding="False"
-        WindowStyle="None" BorderThickness="0" BorderBrush="#30AAAAAA"
+        WindowStyle="None" BorderThickness="0" BorderBrush="#40FFFFFF"
         Visibility="Hidden" ShowInTaskbar="False" PreviewKeyDown="Window_PreviewKeyDown"
         Loaded="Window_Loaded" Deactivated="Window_Deactivated" Closing="Window_Closing"
         fw:AcrylicWindow.Enabled="True" fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}"
