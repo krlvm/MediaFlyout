@@ -80,7 +80,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Focusable="True" FocusVisualStyle="{StaticResource MetroFocusVisualStyle}" KeyDown="AppContainer_KeyDown" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,0,0,2">
                     <Image x:Name="AppIcon" Width="16" Height="16" Source="{Binding AppIcon}" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,5,0" />
-                    <TextBlock x:Name="AppName" FontSize="12" Text="{Binding AppName, FallbackValue='App Name'}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SystemBaseHighColorBrush}" />
+                    <TextBlock x:Name="AppName" FontSize="12" Text="{Binding AppName, FallbackValue='App Name'}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SystemBaseHighColorBrush}" VerticalAlignment="Center" />
                 </StackPanel>
                 <TextBlock Grid.Row="1" x:Name="MediaTitle" FontSize="14" Text="{Binding Title, FallbackValue='Media Title'}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SystemBaseHighColorBrush}" />
                 <TextBlock Grid.Row="2" x:Name="MediaArtist" FontSize="12" Text="{Binding Artist, FallbackValue='Media Artist'}" Foreground="{DynamicResource SystemBaseMediumHighColorBrush}" />
