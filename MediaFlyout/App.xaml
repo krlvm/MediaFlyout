@@ -11,6 +11,14 @@
                 <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+                <Setter Property="TextOptions.TextHintingMode" Value="Auto"/>
+                <Setter Property="RenderOptions.ClearTypeHint" Value="Auto"/>
+            </Style>
+
             <Style x:Key="MetroFocusVisualStyle">
                 <Setter Property="Control.Template">
                     <Setter.Value>
