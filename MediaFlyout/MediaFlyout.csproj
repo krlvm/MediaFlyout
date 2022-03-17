@@ -95,6 +95,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ActivityBooleanToBrushConverter.cs" />
     <Compile Include="Converters\RewindAvailabilityToHorizontalAlignmentConverter.cs" />
+    <Compile Include="Helpers\AcrylicHelper.cs" />
     <Compile Include="Helpers\AnimationHelper.cs" />
     <Compile Include="AppInformation\SourceAppInfo.cs" />
     <Compile Include="AppInformation\SourceAppInfoData.cs" />

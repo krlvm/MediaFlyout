@@ -80,7 +80,8 @@ namespace MediaFlyout
             }
 
             flyout.Topmost = false;
-            AnimationHelper.ShowFlyout(flyout, args.Button == MouseButtons.Right);
+            AnimationHelper.ShowFlyout(flyout, args.Button == MouseButtons.Right || true);
+            flyout.Theme_Apply();
         }
 
         private void OnDoubleClick(object sender, MouseEventArgs args)

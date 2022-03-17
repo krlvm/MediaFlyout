@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 
 namespace MediaFlyout.Helpers
 {
@@ -8,9 +7,24 @@ namespace MediaFlyout.Helpers
         public struct State
         {
             public Position Side;
-            public bool IsAutoHideEnabled;
             public double Right;
             public double Bottom;
+
+            public bool IsHorizontal
+            {
+                get
+                {
+                    return Side == Position.Bottom || Side == Position.Top;
+                }
+            }
+            public bool IsAutoHideEnabled
+            {
+                get
+                {
+                    return IsHorizontal ? (SystemParameters.PrimaryScreenHeight == SystemParameters.WorkArea.Height) :
+                        (SystemParameters.PrimaryScreenWidth == SystemParameters.WorkArea.Width);
+                }
+            }
         }
 
         public enum Position
@@ -61,7 +75,6 @@ namespace MediaFlyout.Helpers
                 return new State
                 {
                     Side = side,
-                    IsAutoHideEnabled = Math.Abs(SystemParameters.PrimaryScreenHeight - SystemParameters.WorkArea.Height) > 0,
                     Right = right,
                     Bottom = bottom
                 };

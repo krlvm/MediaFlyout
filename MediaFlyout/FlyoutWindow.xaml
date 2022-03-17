@@ -9,12 +9,10 @@
         mc:Ignorable="d"
         Title="{x:Static p:Resources.Window_Title}" SizeToContent="Height"
         Height="450" Width="450" ResizeMode="NoResize" UseLayoutRounding="False"
-        WindowStyle="None" BorderThickness="0" BorderBrush="#40FFFFFF"
+        Background="#01000000" WindowStyle="None" AllowsTransparency="True" BorderThickness="0"
         Visibility="Hidden" ShowInTaskbar="False" PreviewKeyDown="Window_PreviewKeyDown"
         Loaded="Window_Loaded" Deactivated="Window_Deactivated" Closing="Window_Closing"
-        fw:AcrylicWindow.Enabled="True" fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}"
-        fw:AcrylicWindow.NoiseOpacity="{DynamicResource FlyoutNoiseOpacity}" fw:AcrylicWindow.AcrylicWindowStyle="None" fw:AcrylicWindow.AcrylicAccentState="{DynamicResource FlyoutAccentState}"
-        fw:AcrylicWindow.TintColor="{DynamicResource FlyoutTintColor}" fw:AcrylicWindow.TintOpacity="{DynamicResource FlyoutTintOpacity}" fw:AcrylicWindow.FallbackColor="{DynamicResource FlyoutFallbackColor}">
+        fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}">
     <Grid>
         <StackPanel Margin="0,8" x:Name="SessionsStackPanel" />
     </Grid>

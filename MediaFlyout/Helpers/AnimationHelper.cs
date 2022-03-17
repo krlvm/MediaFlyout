@@ -16,7 +16,7 @@ namespace MediaFlyout.Helpers
 
             var taskbar = WindowsTaskbar.Current;
 
-            if (taskbar.Side == WindowsTaskbar.Position.Bottom || taskbar.Side == WindowsTaskbar.Position.Top)
+            if (taskbar.IsHorizontal)
             {
                 property = Window.TopProperty;
                 window.Left = taskbar.Right - window.Width + window.BorderThickness.Right;
@@ -24,14 +24,14 @@ namespace MediaFlyout.Helpers
             else
             {
                 property = Window.LeftProperty;
-                window.Top = taskbar.Bottom - window.Height + window.BorderThickness.Bottom + 1;
+                window.Top = taskbar.Bottom - window.Height + window.BorderThickness.Bottom;
             }
 
             switch (taskbar.Side)
             {
                 case WindowsTaskbar.Position.Bottom:
                     from = taskbar.Bottom;
-                    to = taskbar.Bottom - window.Height + window.BorderThickness.Bottom + 1;
+                    to = taskbar.Bottom - window.Height + window.BorderThickness.Bottom;
                     break;
                 case WindowsTaskbar.Position.Top:
                     from = 0;
@@ -52,7 +52,6 @@ namespace MediaFlyout.Helpers
             window.IsRaising = true;
             BringTaskbarToFront();
             if (property == Window.TopProperty) window.Top = 999999; else window.Left = 999999;
-            window.WindowStyle = WindowStyle.SingleBorderWindow;
             window.Visibility = Visibility.Visible;
             System.Threading.Thread.Sleep(1);
             window.Activate();
@@ -64,7 +63,8 @@ namespace MediaFlyout.Helpers
                 if(property == Window.TopProperty)
                 {
                     window.Top = to;
-                } else
+                }
+                else
                 {
                     window.Left = to;
                 }

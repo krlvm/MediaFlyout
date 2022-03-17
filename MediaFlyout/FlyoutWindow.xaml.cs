@@ -20,12 +20,38 @@ namespace MediaFlyout
         private TrayManager tray;
         private GlobalSystemMediaTransportControlsSessionManager smtc;
 
+        #region State
+
         private bool _IsRaising = false;
         public bool IsRaising
         {
             get { return _IsRaising; }
             set { _IsRaising = value; }
         }
+
+        private double _TintOpacity;
+        public double TintOpacity
+        {
+            get { return _TintOpacity; }
+            set
+            {
+                if (_TintOpacity != value && (_TintOpacity == 1 || value == 1))
+                {
+                    _needReset = true;
+                }
+                _TintOpacity = value; 
+            }
+        }
+        private Color _TintColor;
+        public Color TintColor
+        {
+            get { return _TintColor; }
+            set { _TintColor = value; }
+        }
+
+        private bool _needReset = false;
+
+        #endregion
 
         public FlyoutWindow()
         {
@@ -90,7 +116,6 @@ namespace MediaFlyout
             Left = 999999;
             tray.isClosing = true;
             await System.Threading.Tasks.Task.Delay(System.Windows.Forms.SystemInformation.DoubleClickTime / 2);
-            WindowStyle = WindowStyle.None;
             Visibility = Visibility.Hidden;
             tray.isClosing = false;
         }
@@ -182,7 +207,6 @@ namespace MediaFlyout
         private bool theme_accentColorListening = false;
 
         private int OS_BUILD_NUMBER = SystemHelper.GetBuildNumber();
-        private bool bEnableFluentAcrylic = false;
 
         private void Theme_Initialize()
         {
@@ -191,12 +215,45 @@ namespace MediaFlyout
 
             SystemTheme.ThemeChanged += Theme_ThemeChanged;
 
-            bEnableFluentAcrylic = RegistryHelper.GetCUKeyValueOrFalse(@"SOFTWARE\krlvm\MediaFlyout", "EnableFluentAcrylic");
-            Theme_Apply();
+            Theme_Update();
         }
 
-        private void Theme_Apply()
+        public void Theme_Apply()
         {
+            if (_needReset)
+            {
+                AcrylicHelper.Reset(this);
+                _needReset = false;
+            }
+
+            AccentFlags flags;
+            switch (WindowsTaskbar.Current.Side)
+            {
+                case WindowsTaskbar.Position.Left:
+                    flags = AccentFlags.DrawRightBorder | AccentFlags.DrawTopBorder;
+                    break;
+                case WindowsTaskbar.Position.Right:
+                    flags = AccentFlags.DrawLeftBorder | AccentFlags.DrawTopBorder;
+                    break;
+                case WindowsTaskbar.Position.Top:
+                    flags = AccentFlags.DrawLeftBorder | AccentFlags.DrawBottomBorder;
+                    break;
+                case WindowsTaskbar.Position.Bottom:
+                    flags = AccentFlags.DrawTopBorder | AccentFlags.DrawLeftBorder;
+                    break;
+                default:
+                    flags = AccentFlags.None;
+                    break;
+            }
+            AcrylicHelper.Apply(this, TintOpacity, TintColor, flags);
+        }
+
+        private void Theme_Update()
+        {
+            double tintOpacity;
+            Color tintColor, fallbackColor;
+            Color contrastScheme, contrastColor;
+
             bool isAccentSurface = Theme_IsSurfaceAccentColor();
             if (isAccentSurface)
             {
@@ -216,74 +273,60 @@ namespace MediaFlyout
             if (Theme_GetSystemTheme() == WindowsTheme.Light)
             {
                 ResourceDictionaryEx.GlobalTheme = ElementTheme.Light;
-                Resources["FlyoutFallbackColor"] = Color.FromRgb(228, 228, 228);
-                Resources["FlyoutTintColor"] = Color.FromRgb(228, 228, 228);
-                Resources["FlyoutTintOpacity"] = Acrylic_IsEnabled() ? 0.853 : 1;
-                Resources["FlyoutColorScheme"] = Color.FromRgb(255, 255, 255);
-                Resources["FlyoutContrastColor"] = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+                fallbackColor = Color.FromRgb(228, 228, 228);
+                tintColor = Color.FromRgb(228, 228, 228);
+                tintOpacity = 0.853;
+                contrastScheme = Colors.White;
+                contrastColor = Colors.Black;
                 tray.SetIconColor(System.Drawing.Color.Black);
             }
             else
             {
                 ResourceDictionaryEx.GlobalTheme = ElementTheme.Dark;
-                double tintOpacity;
-                if(Theme_IsSurfaceAccentColor())
+                if (Theme_IsSurfaceAccentColor())
                 {
-                    Resources["FlyoutFallbackColor"] = AccentColors.ImmersiveSystemAccentDark1;
-                    Resources["FlyoutTintColor"] = AccentColors.ImmersiveSystemAccentDark1;
+                    fallbackColor = AccentColors.ImmersiveSystemAccentDark1;
+                    tintColor = AccentColors.ImmersiveSystemAccentDark1;
                     tintOpacity = 0.8;
                 }
                 else
                 {
-                    Resources["FlyoutFallbackColor"] = Color.FromRgb(31, 31, 31);
-                    Resources["FlyoutTintColor"] = Acrylic_IsEnabled() ? Color.FromRgb(36, 36, 36) : Color.FromRgb(31, 31, 31);
+                    fallbackColor = Color.FromRgb(31, 31, 31);
+                    tintColor = Color.FromRgb(36, 36, 36);
                     tintOpacity = 0.85;
                 }
-                Resources["FlyoutTintOpacity"] = Acrylic_IsEnabled() ? tintOpacity : 1;
-                Resources["FlyoutColorScheme"] = Color.FromRgb(0, 0, 0);
-                Resources["FlyoutContrastColor"] = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                contrastScheme = Colors.Black;
+                contrastColor = Colors.White;
                 tray.SetIconColor(System.Drawing.Color.White);
             }
 
-            if (Acrylic_IsEnabled())
+            TintOpacity = Acrylic_IsEnabled() ? tintOpacity : 1;
+            TintColor = Acrylic_IsEnabled() ? tintColor : fallbackColor;
+            Resources["FlyoutColorScheme"] = contrastScheme;
+            Resources["FlyoutContrastColor"] = new SolidColorBrush(contrastColor);
+            Resources["FluentRevealEnabled"] = Acrylic_IsEnabled();
+
+            if (Visibility == Visibility.Visible)
             {
-                if (bEnableFluentAcrylic)
-                {
-                    Resources["FlyoutTintOpacity"] = ((double)Resources["FlyoutTintOpacity"])
-                        + (Theme_GetSystemTheme() == WindowsTheme.Light ? -0.1 : -0.05);
-                    Resources["FlyoutNoiseOpacity"] = 0.025;
-                    Resources["FlyoutAccentState"] = AcrylicAccentState.AcrylicBlurBehind;
-                }
-                else
-                {
-                    Resources["FlyoutNoiseOpacity"] = 0.025;
-                    Resources["FlyoutAccentState"] = AcrylicAccentState.BlurBehind;
-                }
-                Resources["FluentRevealEnabled"] = true;
-            }
-            else
-            {
-                Resources["FlyoutNoiseOpacity"] = 0.00000001;
-                Resources["FlyoutAccentState"] = AcrylicAccentState.Disabled;
-                Resources["FluentRevealEnabled"] = false;
+                Theme_Apply();
             }
         }
 
         private void Theme_ThemeChanged(object sender, EventArgs args)
         {
-            Theme_Apply();
+            Theme_Update();
         }
 
         private void Theme_AccentColorChanged(object sender, EventArgs args)
         {
-            //Theme_Apply();
+            //Theme_Update();
         }
 
         private void Theme_AccentSurfaceChanged(object sender, EventArgs args)
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Send, (ThreadStart)delegate ()
             {
-                Theme_Apply();
+                Theme_Update();
             });
         }
 
@@ -316,7 +359,7 @@ namespace MediaFlyout
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Send, (ThreadStart)delegate ()
             {
-                Theme_Apply();
+                Theme_Update();
             });
         }
 
