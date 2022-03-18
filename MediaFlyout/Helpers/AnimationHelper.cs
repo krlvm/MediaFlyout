@@ -7,7 +7,7 @@ namespace MediaFlyout.Helpers
 {
     class AnimationHelper
     {
-        private const double ANIMATION_TIME = 0.25;
+        private const double ANIMATION_TIME = 0.3;
 
         public static void ShowFlyout<T>(T window, bool topmost = false) where T : Window, IFlyout
         {
@@ -71,15 +71,15 @@ namespace MediaFlyout.Helpers
                 return;
             }
 
-            var easingMode = to - from > 0 ? EasingMode.EaseOut : EasingMode.EaseIn;
-            easingMode = EasingMode.EaseInOut;
+            var easingMode = to < from ? EasingMode.EaseOut : EasingMode.EaseIn;
+            easingMode = EasingMode.EaseOut;
 
             var entraceAnimation = new DoubleAnimation
             {
                 Duration = TimeSpan.FromSeconds(ANIMATION_TIME),
                 From = from,
                 To = to,
-                EasingFunction = new CircleEase
+                EasingFunction = new CubicEase
                 {
                     EasingMode = easingMode
                 }
@@ -92,7 +92,7 @@ namespace MediaFlyout.Helpers
                 Duration = TimeSpan.FromSeconds(ANIMATION_TIME),
                 From = 0.8,
                 To = 1,
-                EasingFunction = new CircleEase
+                EasingFunction = new CubicEase
                 {
                     EasingMode = easingMode
                 }
