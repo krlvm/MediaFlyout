@@ -9,6 +9,7 @@ using SourceChord.FluentWPF;
 using System.Windows.Media;
 using MediaFlyout.Helpers;
 using MediaFlyout.Views;
+using Microsoft.Win32;
 
 namespace MediaFlyout
 {
@@ -66,6 +67,8 @@ namespace MediaFlyout
             UpdateStatus();
 
             PrepareWindow();
+
+            SystemEvents.PowerModeChanged += OnPowerModeChanged;
         }
 
         #region Window Management
@@ -122,11 +125,26 @@ namespace MediaFlyout
 
         #endregion
 
+        #region Sleep Management
+        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs args)
+        {
+            if (args.Mode == PowerModes.Resume)
+            {
+                InvalidateSessions();
+                SMTC_Initialize();
+                UpdateAll();
+            }
+        }
+        #endregion
+
         #region Session Management
 
         public void TogglePlayback()
         {
-            if ((bool)SMTC_IsPlaying())
+            bool? isPlaying = SMTC_IsPlaying();
+            if (isPlaying == null) return;
+
+            if ((bool)isPlaying)
             {
                 foreach (var session in smtc.GetSessions())
                 {
@@ -144,18 +162,28 @@ namespace MediaFlyout
             tray.SetStatus(SMTC_IsPlaying());
         }
 
-        private void UpdateSessions()
+        private void InvalidateSessions()
         {
             foreach (var item in SessionsStackPanel.Children)
             {
                 ((SessionItem)item).Invalidate();
             }
             SessionsStackPanel.Children.Clear();
+        }
 
+        private void UpdateSessions()
+        {
+            InvalidateSessions();
             foreach (var session in smtc.GetSessions())
             {
                 SessionsStackPanel.Children.Add(new SessionItem(this, session));
             }
+        }
+
+        private void UpdateAll()
+        {
+            UpdateStatus();
+            UpdateSessions();
         }
 
         #endregion
@@ -164,7 +192,10 @@ namespace MediaFlyout
 
         private void SMTC_Initialize()
         {
-            if (smtc != null) throw new InvalidOperationException();
+            if (smtc != null)
+            {
+                smtc.SessionsChanged -= SMTC_SessionsChanged;
+            }
 
             //smtc = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
             var task = GlobalSystemMediaTransportControlsSessionManager.RequestAsync().AsTask();
@@ -178,14 +209,13 @@ namespace MediaFlyout
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Send, (ThreadStart)delegate ()
             {
-                UpdateStatus();
-                UpdateSessions();
+                UpdateAll();
             });
         }
 
         private bool? SMTC_IsPlaying()
         {
-            if (!smtc.GetSessions().Any()) return null;
+            if (smtc == null || !smtc.GetSessions().Any()) return null;
 
             bool isPlaying = false;
             foreach (var session in smtc.GetSessions())
@@ -204,6 +234,9 @@ namespace MediaFlyout
 
         private const string REG_PERSONALIZATION_KEY = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize";
         private const string ACCENT_SURFACE_VALUE = "ColorPrevalence";
+        private const string ACRYLIC_VALUE = "EnableTransparency";
+
+        private WindowsTheme theme_last;
         private bool theme_accentColorListening = false;
 
         private int OS_BUILD_NUMBER = SystemHelper.GetBuildNumber();
@@ -270,7 +303,8 @@ namespace MediaFlyout
                 }
             }
 
-            if (Theme_GetSystemTheme() == WindowsTheme.Light)
+            WindowsTheme theme = Theme_GetSystemTheme();
+            if (theme == WindowsTheme.Light)
             {
                 ResourceDictionaryEx.GlobalTheme = ElementTheme.Light;
                 fallbackColor = Color.FromRgb(228, 228, 228);
@@ -306,6 +340,12 @@ namespace MediaFlyout
             Resources["FlyoutContrastColor"] = new SolidColorBrush(contrastColor);
             Resources["FluentRevealEnabled"] = Acrylic_IsEnabled();
 
+            if (theme_last != theme)
+            {
+                UpdateSessions();
+            }
+            theme_last = theme;
+
             if (Visibility == Visibility.Visible)
             {
                 Theme_Apply();
@@ -332,7 +372,7 @@ namespace MediaFlyout
 
         private bool Theme_IsSurfaceAccentColor()
         {
-            using (Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(REG_PERSONALIZATION_KEY))
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(REG_PERSONALIZATION_KEY))
             {
                 if (key == null)
                 {
@@ -352,8 +392,6 @@ namespace MediaFlyout
             if (OS_BUILD_NUMBER < 18282) return WindowsTheme.Dark;
             return SystemTheme.WindowsTheme;
         }
-
-        private const string ACRYLIC_VALUE = "EnableTransparency";
 
         private void Acrylic_ValueChanged(object sender, EventArgs args)
         {
