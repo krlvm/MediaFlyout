@@ -71,6 +71,12 @@ namespace MediaFlyout
 
         private void OnClick(object sender, MouseEventArgs args)
         {
+            if (args.Button == MouseButtons.Middle)
+            {
+                flyout.TogglePlayback();
+                return;
+            }
+
             if (isClosing) return;
 
             if (flyout.Visibility == Visibility.Visible)
