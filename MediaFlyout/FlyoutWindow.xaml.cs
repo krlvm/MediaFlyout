@@ -125,14 +125,19 @@ namespace MediaFlyout
 
         #endregion
 
+        public void ReloadFlyout()
+        {
+            InvalidateSessions();
+            SMTC_Initialize();
+            UpdateAll();
+        }
+
         #region Sleep Management
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs args)
         {
             if (args.Mode == PowerModes.Resume)
             {
-                InvalidateSessions();
-                SMTC_Initialize();
-                UpdateAll();
+                ReloadFlyout();
             }
         }
         #endregion

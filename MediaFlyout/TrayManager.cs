@@ -85,8 +85,13 @@ namespace MediaFlyout
                 return;
             }
 
+            if (args.Button == MouseButtons.Right)
+            {
+                flyout.ReloadFlyout();
+            }
+
             flyout.Topmost = false;
-            AnimationHelper.ShowFlyout(flyout, args.Button == MouseButtons.Right || true);
+            AnimationHelper.ShowFlyout(flyout, true);
             flyout.Theme_Apply();
         }
 
