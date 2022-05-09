@@ -97,6 +97,7 @@ namespace MediaFlyout.AppInformation
 
                     LogoStream = memoryStream;
                 }
+                bitmap.Dispose();
             });
 
             InfoFetched?.Invoke(this, null);

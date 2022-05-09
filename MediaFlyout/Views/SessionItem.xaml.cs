@@ -50,7 +50,7 @@ namespace MediaFlyout.Views
         {
             session.MediaPropertiesChanged -= Session_MediaPropertiesChanged;
             session.PlaybackInfoChanged -= Session_PlaybackInfoChanged;
-            sourceInfo.Dispose();
+            sourceInfo?.Dispose();
 
             sourceInfo = null;
             session = null;
@@ -96,7 +96,7 @@ namespace MediaFlyout.Views
             try
             {
                 properties = await session.TryGetMediaPropertiesAsync();
-            } catch(FileNotFoundException)
+            } catch (FileNotFoundException)
             {
                 // Rare exception
                 // Occurs when editing video in Windows Photos app
