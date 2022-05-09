@@ -25,6 +25,8 @@ namespace MediaFlyout
 
         #region State
 
+        TrayManager IFlyout.Tray => tray;
+
         private bool _IsRaising = false;
         public bool IsRaising
         {
@@ -42,7 +44,7 @@ namespace MediaFlyout
                 {
                     _needReset = true;
                 }
-                _TintOpacity = value; 
+                _TintOpacity = value;
             }
         }
         private Color _TintColor;
@@ -69,6 +71,10 @@ namespace MediaFlyout
             UpdateStatus();
 
             PrepareWindow();
+            if (AnimationHelper.IS_WINDOWS11)
+            {
+                DwmHelper.ApplyRoundedCorners(this);
+            }
 
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
 
@@ -144,11 +150,7 @@ namespace MediaFlyout
         public async void DismissFlyout()
         {
             if (Visibility == Visibility.Hidden) return;
-            Left = 999999;
-            tray.isClosing = true;
-            await System.Threading.Tasks.Task.Delay(System.Windows.Forms.SystemInformation.DoubleClickTime / 2);
-            Visibility = Visibility.Hidden;
-            tray.isClosing = false;
+            AnimationHelper.HideFlyout(this);
         }
 
         #endregion
@@ -292,24 +294,24 @@ namespace MediaFlyout
                 _needReset = false;
             }
 
-            AccentFlags flags;
-            switch (WindowsTaskbar.Current.Side)
+            AccentFlags flags = AccentFlags.None;
+            if (!AnimationHelper.IS_WINDOWS11)
             {
-                case WindowsTaskbar.Position.Left:
-                    flags = AccentFlags.DrawRightBorder | AccentFlags.DrawTopBorder;
-                    break;
-                case WindowsTaskbar.Position.Right:
-                    flags = AccentFlags.DrawLeftBorder | AccentFlags.DrawTopBorder;
-                    break;
-                case WindowsTaskbar.Position.Top:
-                    flags = AccentFlags.DrawLeftBorder | AccentFlags.DrawBottomBorder;
-                    break;
-                case WindowsTaskbar.Position.Bottom:
-                    flags = AccentFlags.DrawTopBorder | AccentFlags.DrawLeftBorder;
-                    break;
-                default:
-                    flags = AccentFlags.None;
-                    break;
+                switch (WindowsTaskbar.Current.Side)
+                {
+                    case WindowsTaskbar.Position.Left:
+                        flags = AccentFlags.DrawRightBorder | AccentFlags.DrawTopBorder;
+                        break;
+                    case WindowsTaskbar.Position.Right:
+                        flags = AccentFlags.DrawLeftBorder | AccentFlags.DrawTopBorder;
+                        break;
+                    case WindowsTaskbar.Position.Top:
+                        flags = AccentFlags.DrawLeftBorder | AccentFlags.DrawBottomBorder;
+                        break;
+                    case WindowsTaskbar.Position.Bottom:
+                        flags = AccentFlags.DrawTopBorder | AccentFlags.DrawLeftBorder;
+                        break;
+                }
             }
             AcrylicHelper.Apply(this, TintOpacity, TintColor, flags);
         }

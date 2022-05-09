@@ -101,6 +101,7 @@
     <Compile Include="AppInformation\SourceAppInfoData.cs" />
     <Compile Include="AppInformation\SourceDesktopAppInfo.cs" />
     <Compile Include="AppInformation\SourceModernAppInfo.cs" />
+    <Compile Include="Helpers\DwmHelper.cs" />
     <Compile Include="Helpers\InteropHelper.cs" />
     <Compile Include="Helpers\RegistryHelper.cs" />
     <Compile Include="Helpers\SystemHelper.cs" />
