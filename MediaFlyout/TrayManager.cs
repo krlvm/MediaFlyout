@@ -52,9 +52,6 @@ namespace MediaFlyout
                 return;
             }
 
-            tray.Visible = true;
-            tray.Text = (bool)isPlaying ? Resources.Tray_Pause : Resources.Tray_Play;
-
             try
             {
                 tray.Icon = icons[(bool)isPlaying ? 0 : 1];
@@ -65,6 +62,8 @@ namespace MediaFlyout
                 // Generate another one
                 SetIconColor(trayIconColor, true);
             }
+            tray.Visible = true;
+            tray.Text = (bool)isPlaying ? Resources.Tray_Pause : Resources.Tray_Play;
         }
 
         #region Click Handlers
