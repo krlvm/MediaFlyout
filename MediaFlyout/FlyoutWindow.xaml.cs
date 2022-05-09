@@ -69,6 +69,16 @@ namespace MediaFlyout
             PrepareWindow();
 
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
+
+#if !DEBUG
+            // Kill other MediaFlyout instances
+            System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
+            System.Diagnostics.Process.GetProcesses()
+                .Where(process => process.ProcessName == currentProcess.ProcessName)
+                .Where(process => process.Id != currentProcess.Id)
+                .ToList()
+                .ForEach(process => process.Kill());
+#endif
         }
 
         #region Window Management
