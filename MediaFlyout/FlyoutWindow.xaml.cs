@@ -21,6 +21,8 @@ namespace MediaFlyout
         private TrayManager tray;
         private GlobalSystemMediaTransportControlsSessionManager smtc;
 
+        private bool problemDetected = false;
+
         #region State
 
         private bool _IsRaising = false;
@@ -121,6 +123,22 @@ namespace MediaFlyout
             {
                 e.Handled = true;
             }
+        }
+
+        public void RaiseFlyout()
+        {
+            if (SessionsStackPanel.Children.Count == 0)
+            {
+                if (problemDetected)
+                {
+                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                    Application.Current.Shutdown();
+                    return;
+                }
+                problemDetected = true;
+                ReloadFlyout();
+            }
+            AnimationHelper.ShowFlyout(this, true);
         }
 
         public async void DismissFlyout()

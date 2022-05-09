@@ -90,7 +90,7 @@ namespace MediaFlyout
             }
 
             flyout.Topmost = false;
-            AnimationHelper.ShowFlyout(flyout, true);
+            flyout.RaiseFlyout();
             flyout.Theme_Apply();
         }
 
