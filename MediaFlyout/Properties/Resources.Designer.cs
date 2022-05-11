@@ -117,14 +117,5 @@ namespace MediaFlyout.Properties {
                 return ResourceManager.GetString("Tray_Play", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Media Control.
-        /// </summary>
-        public static string Window_Title {
-            get {
-                return ResourceManager.GetString("Window_Title", resourceCulture);
-            }
-        }
     }
 }

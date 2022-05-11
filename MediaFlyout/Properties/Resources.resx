@@ -136,7 +136,4 @@
   <data name="Tray_Play" xml:space="preserve">
     <value>Play</value>
   </data>
-  <data name="Window_Title" xml:space="preserve">
-    <value>Media Control</value>
-  </data>
 </root>
