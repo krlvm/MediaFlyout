@@ -3,10 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using MediaFlyout.Helpers;
-using static MediaFlyout.Interop.NativeMethods;
+using static MediaFlyout.Interop.User32;
 
 namespace MediaFlyout.AppInformation
 {
@@ -41,6 +40,14 @@ namespace MediaFlyout.AppInformation
                 }
                 if (sourceProcess.MainWindowHandle == IntPtr.Zero)
                 {
+                
+                    var handles = new List<IntPtr>();
+
+                    foreach (ProcessThread thread in Process.GetProcessById(processId).Threads)
+                    {
+                        EnumThreadWindows(thread.Id, (hWnd, lParam) => { handles.Add(hWnd); return true; }, IntPtr.Zero);
+                    }
+
                     var handles = InteropHelper.EnumerateProcessWindowHandles(sourceProcess.Id);
                     hWnd = handles.Any() ? handles.First() : IntPtr.Zero;
                 }

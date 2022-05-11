@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using static MediaFlyout.Interop.NativeMethods;
+using MediaFlyout.Interop;
 
 namespace MediaFlyout.AppInformation
 {
@@ -96,7 +96,7 @@ namespace MediaFlyout.AppInformation
         {
             using(var process = Process.GetProcessById((int)data.ProcessId))
             {
-                return IsImmersiveProcess(process.Handle);
+                return User32.IsImmersiveProcess(process.Handle);
             }
         }
 

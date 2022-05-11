@@ -1,9 +1,26 @@
 ﻿using System.Drawing;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace MediaFlyout.Helpers
 {
-    class TrayIconHelper
+    class TrayIconUtil
     {
+        public static Icon LoadIcon(Icon iconDefault, Icon iconDpi, Color color)
+        {
+            var dpi = Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth;
+
+            var icon = dpi == 1 ? iconDefault : iconDpi;
+            if (color != Color.White)
+            {
+                var newIcon = ColorIcon(icon, 1, color);
+                icon.Dispose();
+                return newIcon;
+            }
+
+            return icon;
+        }
+
         public static Color TranslateColor(System.Windows.Media.Color color)
         {
             return Color.FromArgb(color.A, color.R, color.G, color.B);

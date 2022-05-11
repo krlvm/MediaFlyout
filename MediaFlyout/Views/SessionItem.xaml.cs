@@ -17,7 +17,7 @@ namespace MediaFlyout.Views
     /// </summary>
     public partial class SessionItem : UserControl
     {
-        private FlyoutWindow window;
+        private MediaFlyoutWindow window;
         private GlobalSystemMediaTransportControlsSession session;
 
         private SourceAppInfo sourceInfo;
@@ -26,7 +26,7 @@ namespace MediaFlyout.Views
         private SessionItemViewModel model = new SessionItemViewModel();
         private const bool ENABLE_DETAILS_PANE = false; // WIP
 
-        public SessionItem(FlyoutWindow window, GlobalSystemMediaTransportControlsSession session)
+        public SessionItem(MediaFlyoutWindow window, GlobalSystemMediaTransportControlsSession session)
         {
             InitializeComponent();
             DataContext = model;

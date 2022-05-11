@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MediaFlyout.Interop;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Management.Deployment;
-using static MediaFlyout.Interop.NativeMethods;
 
 namespace MediaFlyout.AppInformation
 {
@@ -37,7 +37,7 @@ namespace MediaFlyout.AppInformation
                 {
                     using (var sourceProcess = Process.GetProcessById((int)Data.ProcessId))
                     {
-                        IntPtr hWnd = IsWindow(Data.MainWindowHandle)
+                        IntPtr hWnd = User32.IsWindow(Data.MainWindowHandle)
                             ? Data.MainWindowHandle : sourceProcess?.MainWindowHandle ?? IntPtr.Zero;
                         SourceDesktopAppInfo.ActivateWindow(hWnd);
                     }
@@ -204,7 +204,7 @@ namespace MediaFlyout.AppInformation
                 int amuidBufferLength = 512;
                 StringBuilder amuidBuffer = new StringBuilder(amuidBufferLength);
 
-                GetApplicationUserModelId(process.Handle, ref amuidBufferLength, amuidBuffer);
+                Kernel32.GetApplicationUserModelId(process.Handle, ref amuidBufferLength, amuidBuffer);
                 return amuidBuffer.ToString();
             }
         }

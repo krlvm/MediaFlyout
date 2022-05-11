@@ -62,6 +62,9 @@
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentWPF, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentWPF.0.10.2\lib\net45\FluentWPF.dll</HintPath>
@@ -95,20 +98,24 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ActivityBooleanToBrushConverter.cs" />
     <Compile Include="Converters\RewindAvailabilityToHorizontalAlignmentConverter.cs" />
-    <Compile Include="Helpers\AcrylicHelper.cs" />
+    <Compile Include="Extensions\ColorExtensions.cs" />
+    <Compile Include="Extensions\OperatingSystemExtensions.cs" />
+    <Compile Include="Extensions\WindowExtensions.cs" />
+    <Compile Include="Flyout\FlyoutWindow.cs" />
+    <Compile Include="Flyout\FlyoutTray.cs" />
     <Compile Include="Helpers\AnimationHelper.cs" />
     <Compile Include="AppInformation\SourceAppInfo.cs" />
     <Compile Include="AppInformation\SourceAppInfoData.cs" />
     <Compile Include="AppInformation\SourceDesktopAppInfo.cs" />
     <Compile Include="AppInformation\SourceModernAppInfo.cs" />
-    <Compile Include="Helpers\DwmHelper.cs" />
-    <Compile Include="Helpers\InteropHelper.cs" />
-    <Compile Include="Helpers\RegistryHelper.cs" />
-    <Compile Include="Helpers\SystemHelper.cs" />
-    <Compile Include="Helpers\TrayClickListener.cs" />
-    <Compile Include="Helpers\TrayIconHelper.cs" />
+    <Compile Include="Helpers\ThemeHelper.cs" />
+    <Compile Include="Utilities\RegistryUtil.cs" />
+    <Compile Include="Utilities\TrayClickListener.cs" />
+    <Compile Include="Utilities\TrayIconUtil.cs" />
     <Compile Include="Helpers\WindowsTaskbar.cs" />
-    <Compile Include="Interop\NativeMethods.cs" />
+    <Compile Include="Interop\DwmApi.cs" />
+    <Compile Include="Interop\Kernel32.cs" />
+    <Compile Include="Interop\User32.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -124,10 +131,10 @@
     <Compile Include="Views\SessionItem.xaml.cs">
       <DependentUpon>SessionItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TrayManager.cs" />
-    <Compile Include="Helpers\IconExtractor.cs" />
-    <Compile Include="Helpers\RegistryWatcher.cs" />
-    <Page Include="FlyoutWindow.xaml">
+    <Compile Include="MediaFlyoutTray.cs" />
+    <Compile Include="Utilities\IconExtractor.cs" />
+    <Compile Include="Utilities\RegistryWatcher.cs" />
+    <Page Include="MediaFlyoutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -135,8 +142,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FlyoutWindow.xaml.cs">
-      <DependentUpon>FlyoutWindow.xaml</DependentUpon>
+    <Compile Include="MediaFlyoutWindow.xaml.cs">
+      <DependentUpon>MediaFlyoutWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\SessionItem.xaml">
@@ -162,6 +169,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.ru.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

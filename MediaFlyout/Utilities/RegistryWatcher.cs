@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Management;
+using System.Security.Principal;
 
 namespace MediaFlyout.Helpers
 {
@@ -33,17 +34,15 @@ namespace MediaFlyout.Helpers
                 OnChange(this, EventArgs.Empty);
             }
         }
-    }
 
-    class CurrentUserRegistryWatcher : RegistryWatcher
-    {
-        public CurrentUserRegistryWatcher(string key, string value) : base(
-            "HKEY_USERS",
-            System.Security.Principal.WindowsIdentity.GetCurrent().User.Value + "\\\\" + key.Replace("\\", "\\\\"),
-            value
-        )
+        
+        public static RegistryWatcher WatchUser(string key, string value, EventHandler handler = null)
         {
-
+            var watcher = new RegistryWatcher("HKEY_USERS",
+                WindowsIdentity.GetCurrent().User.Value + "\\\\" + key.Replace("\\", "\\\\"),
+                value);
+            watcher.OnChange += handler;
+            return watcher;
         }
     }
 }

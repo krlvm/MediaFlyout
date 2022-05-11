@@ -1,19 +1,16 @@
-﻿<Window x:Class="MediaFlyout.FlyoutWindow"
+﻿<flyout:FlyoutWindow x:Class="MediaFlyout.MediaFlyoutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MediaFlyout"
+        xmlns:flyout="clr-namespace:MediaFlyout.Flyout"
         xmlns:p = "clr-namespace:MediaFlyout.Properties"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
         mc:Ignorable="d"
-        Title="{x:Static p:Resources.Window_Title}" SizeToContent="Height"
-        Height="450" Width="450" ResizeMode="NoResize" UseLayoutRounding="False"
-        Background="#01000000" WindowStyle="None" AllowsTransparency="True" BorderThickness="0"
-        Visibility="Hidden" ShowInTaskbar="False" PreviewKeyDown="Window_PreviewKeyDown"
-        Loaded="Window_Loaded" Deactivated="Window_Deactivated" Closing="Window_Closing"
+        Title="{x:Static p:Resources.Window_Title}" Height="450" Width="450"
         fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}">
     <Grid>
         <StackPanel Margin="0,8" x:Name="SessionsStackPanel" />
     </Grid>
-</Window>
+</flyout:FlyoutWindow>

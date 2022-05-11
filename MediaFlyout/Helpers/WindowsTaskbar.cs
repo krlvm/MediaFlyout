@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using MediaFlyout.Interop;
+using System;
+using System.Windows;
 
 namespace MediaFlyout.Helpers
 {
@@ -81,6 +83,6 @@ namespace MediaFlyout.Helpers
             }
         }
 
-        //private static IntPtr GetHwnd() => User32.FindWindow("Shell_TrayWnd", null);
+        public static IntPtr GetHandle() => User32.FindWindow("Shell_TrayWnd", null);
     }
 }

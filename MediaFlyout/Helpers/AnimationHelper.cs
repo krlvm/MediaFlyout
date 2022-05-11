@@ -1,7 +1,9 @@
-﻿using MediaFlyout.Interop;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Media.Animation;
+using MediaFlyout.Interop;
+using MediaFlyout.Extensions;
+using MediaFlyout.Flyout;
 
 namespace MediaFlyout.Helpers
 {
@@ -10,7 +12,7 @@ namespace MediaFlyout.Helpers
         private const double ANIMATION_TIME_ENTRACE = 0.3;
         private const double ANIMATION_TIME_EXIT = 0.08;
 
-        private static FlyoutAnimationScheme CalculateFlyoutAnimationScheme<T>(T window, bool topmost = false) where T : Window, IFlyout
+        private static FlyoutAnimationScheme CalculateFlyoutAnimationScheme(FlyoutWindow window, bool topmost = false)
         {
             DependencyProperty property;
             double from, to;
@@ -50,7 +52,7 @@ namespace MediaFlyout.Helpers
                     throw new InvalidOperationException();
             }
 
-            if (IS_WINDOWS11)
+            if (Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2))
             {
                 to -= 12;
                 window.Left = taskbar.Right - window.Width + window.BorderThickness.Right - 12;
@@ -64,7 +66,7 @@ namespace MediaFlyout.Helpers
             };
         }
 
-        public static void ShowFlyout<T>(T window, bool topmost = false) where T : Window, IFlyout
+        public static void ShowFlyout(FlyoutWindow window, bool topmost = false)
         {
             var scheme = CalculateFlyoutAnimationScheme(window);
 
@@ -75,7 +77,7 @@ namespace MediaFlyout.Helpers
             System.Threading.Thread.Sleep(1);
             window.Activate();
             BringTaskbarToFront();
-            InteropHelper.CloakWindow(window, false);
+            window.Cloak(false);
 
             if (!SystemParameters.MenuAnimation)
             {
@@ -87,6 +89,7 @@ namespace MediaFlyout.Helpers
                 {
                     window.Left = scheme.To;
                 }
+                window.Cloak(false);
                 return;
             }
 
@@ -132,20 +135,32 @@ namespace MediaFlyout.Helpers
                 window.IsRaising = false;
             };
 
+            window.Cloak(false);
+
             sb.Begin(window);
         }
 
-        public static void HideFlyout<T>(T window) where T : Window, IFlyout
+        public static void HideFlyout(FlyoutWindow window)
         {
-            if (!SystemParameters.MenuAnimation || !IS_WINDOWS11)
+            var onCompleted = new EventHandler((s, e) =>
             {
-                HideFlyoutInternal(window);
+                window.Cloak();
+                window.Left = 999999;
+                window.Tray.isClosing = true;
+                System.Threading.Thread.Sleep(System.Windows.Forms.SystemInformation.DoubleClickTime / 2);
+                window.Visibility = Visibility.Hidden;
+                window.Tray.isClosing = false;
+            });
+
+            if (!SystemParameters.MenuAnimation || Environment.OSVersion.IsLessThan(OSVersions.VER_11_21H2))
+            {
+                onCompleted(null, null);
                 return;
             }
 
             var scheme = CalculateFlyoutAnimationScheme(window);
 
-            InteropHelper.CloakWindow(window, false);
+            window.Cloak(false);
 
             var easingMode = scheme.To < scheme.From ? EasingMode.EaseOut : EasingMode.EaseIn;
             easingMode = EasingMode.EaseIn;
@@ -180,44 +195,18 @@ namespace MediaFlyout.Helpers
             sb.FillBehavior = FillBehavior.Stop;
             sb.Children.Add(fadeAnimation);
             sb.Children.Add(exitAnimation);
-            sb.Completed += (object sender, EventArgs e) =>
-            {
-                HideFlyoutInternal(window);
-            };
+            sb.Completed += onCompleted;
 
             BringTaskbarToFront();
             sb.Begin(window);
         }
 
-        private static void HideFlyoutInternal<T>(T window) where T : Window, IFlyout
-        {
-            window.Left = 999999;
-            window.Tray.isClosing = true;
-            System.Threading.Thread.Sleep(System.Windows.Forms.SystemInformation.DoubleClickTime / 2);
-            window.Visibility = Visibility.Hidden;
-            window.Tray.isClosing = false;
-        }
-
         public static void BringTaskbarToFront()
         {
-            NativeMethods.SetForegroundWindow(NativeMethods.FindWindow("Shell_TrayWnd", null));
-        }
-
-        public static bool IS_WINDOWS11 { get => _isWindows11; }
-        private static bool _isWindows11 = IsWindows11();
-        private static bool IsWindows11()
-        {
-            var reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
-            var currentBuild = int.Parse((string)reg.GetValue("CurrentBuild"));
-            return currentBuild >= 22000;
+            User32.SetForegroundWindow(WindowsTaskbar.GetHandle());
         }
     }
 
-    interface IFlyout
-    {
-        TrayManager Tray { get; }
-        bool IsRaising { get; set; }
-    }
 
     struct FlyoutAnimationScheme
     {
