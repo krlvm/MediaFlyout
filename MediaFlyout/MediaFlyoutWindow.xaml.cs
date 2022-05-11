@@ -40,8 +40,7 @@ namespace MediaFlyout
             {
                 if (problemDetected)
                 {
-                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-                    Application.Current.Shutdown();
+                    App.RestartApp();
                     return;
                 }
                 problemDetected = true;

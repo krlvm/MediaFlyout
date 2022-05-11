@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace MediaFlyout
@@ -8,6 +8,7 @@ namespace MediaFlyout
     {
         App()
         {
+            AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 #if !DEBUG
             // Kill other MediaFlyout instances
             Process currentProcess = Process.GetCurrentProcess();
@@ -17,6 +18,17 @@ namespace MediaFlyout
                 .ToList()
                 .ForEach(process => process.Kill());
 #endif
+        }
+
+        public void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            RestartApp();
+        }
+
+        public static void RestartApp()
+        {
+            Process.Start(ResourceAssembly.Location);
+            Current.Shutdown();
         }
     }
 }
