@@ -9,24 +9,27 @@
     <Style x:Key="ButtonRevealStyle" TargetType="{x:Type Button}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColorBrush}" />
-        <Setter Property="Background" Value="#80808080" />
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource SystemBaseMediumHighColorBrush}" />
-        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderThickness" Value="1.1" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="local:RevealElement.MouseOverForeground" Value="{DynamicResource SystemBaseHighColorBrush}" />
-        <Setter Property="local:RevealElement.MouseOverBackground" Value="#80808080" />
-        <Setter Property="local:RevealElement.MouseOverBorderOpacity" Value="0.1" />
-        <Setter Property="local:RevealElement.PressBorderOpacity" Value="0.2" />
-        <Setter Property="local:RevealElement.BorderRadius" Value="0" />
-        <Setter Property="local:RevealElement.PressTintBrush" Value="{DynamicResource SystemBaseLowColorBrush}" />
+        <Setter Property="local:RevealElement.MouseOverBackground" Value="{DynamicResource FluentButtonHoverBackgroundBrush}" />
+        <Setter Property="local:RevealElement.MouseOverBorderOpacity" Value="0.3" />
+        <Setter Property="local:RevealElement.PressBorderOpacity" Value="0" />
+        <Setter Property="local:RevealElement.PressTintBrush" Value="#10FFFFFF" />
+        <Setter Property="local:RevealElement.BorderRadius" Value="{DynamicResource FluentButtonRadius}" />
 
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid>
+                    <Grid RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="GridTransform" ScaleX="1" ScaleY="1" />
+                        </Grid.RenderTransform>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
@@ -77,6 +80,18 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="ScaleX" Storyboard.TargetName="GridTransform" To="0.99" Duration="0:0:0.1">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="ScaleY" Storyboard.TargetName="GridTransform" To="0.99" Duration="0:0:0.1">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+
+
                                         <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="backgroundBorder"
                                                          To="0.5" Duration="0:0:0.600">
                                             <DoubleAnimation.EasingFunction>
@@ -174,7 +189,7 @@
                                 Opacity="0"
                                 CornerRadius="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=(local:RevealElement.BorderRadius)}">
                             <Grid ClipToBounds="True">
-                                <Border x:Name="mouseoverLight" Background="{local:RevealBrush Color=White, Size = 300,Opacity=0.2}"
+                                <Border x:Name="mouseoverLight" Background="{local:RevealBrush Color=White, Size = 300,Opacity=0.1}"
                                         CornerRadius="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=(local:RevealElement.BorderRadius)}"/>
                                 <Rectangle x:Name="pressLight" >
                                     <Rectangle.Clip>
@@ -204,7 +219,7 @@
                                                     <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type Rectangle}}" Path="(local:PointerTracker.Position)" />
                                                 </MultiBinding>
                                             </RadialGradientBrush.GradientOrigin>
-                                            <GradientStop Color="Transparent" Offset="0"/>
+                                            <GradientStop Color="{DynamicResource FluentButtonRevealEffectColor}" Offset="0"/>
                                             <GradientStop x:Name="offset" Color="#88FFFFFF" Offset="0.5"/>
                                             <GradientStop Color="Transparent" Offset="1"/>
                                         </RadialGradientBrush>
@@ -257,10 +272,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
-    <Style x:Key="ButtonRoundRevealStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonRevealStyle}">
-        <Setter Property="local:RevealElement.BorderRadius" Value="6" />
     </Style>
 
 </ResourceDictionary>

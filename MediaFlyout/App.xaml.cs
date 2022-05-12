@@ -9,8 +9,10 @@ namespace MediaFlyout
     {
         App()
         {
-            AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 #if !DEBUG
+            // Restart on crash
+            AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
+
             // Kill other MediaFlyout instances
             Process currentProcess = Process.GetCurrentProcess();
             Process.GetProcesses()

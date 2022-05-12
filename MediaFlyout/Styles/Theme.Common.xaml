@@ -1,6 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <sys:Double x:Key="FluentButtonRadius">0</sys:Double>
+    <CornerRadius x:Key="FluentCornerRadius">0</CornerRadius>
+    
     <SolidColorBrush x:Key="SystemBaseLowColorBrush" Color="{DynamicResource SystemBaseLowColor}" />
     <SolidColorBrush x:Key="SystemBaseMediumLowColorBrush" Color="{DynamicResource SystemBaseMediumLowColor}" />
     <SolidColorBrush x:Key="SystemBaseMediumColorBrush" Color="{DynamicResource SystemBaseMediumColor}" />
@@ -14,15 +18,13 @@
     <SolidColorBrush x:Key="SystemAltHighColorBrush" Color="{DynamicResource SystemAltHighColor}" />
 
     <SolidColorBrush x:Key="FluentButtonBackgroundBrush" Color="{DynamicResource FluentButtonBackgroundColor}" />
-    <Style x:Key="FluentButton" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonRevealStyle}">
-        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundBrush}" />
-    </Style>
+    <SolidColorBrush x:Key="FluentButtonHoverBackgroundBrush" Color="{DynamicResource FluentButtonHoverBackgroundColor}" />
 
     <Style x:Key="FluentFocusVisualStyle">
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Rectangle Margin="-4" StrokeThickness="2" Stroke="{DynamicResource ThemeContrastColor}"/>
+                    <Rectangle Margin="-4" StrokeThickness="2" Stroke="{DynamicResource SystemAltHighColor}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

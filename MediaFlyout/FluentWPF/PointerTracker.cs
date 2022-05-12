@@ -352,7 +352,7 @@ namespace MediaFlyout.FluentWPF
         }
         // Using a DependencyProperty as the backing store for PressTintBrush.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PressTintBrushProperty =
-            DependencyProperty.RegisterAttached("PressTintBrush", typeof(Brush), typeof(RevealElement), new PropertyMetadata(Brushes.Gray));
+            DependencyProperty.RegisterAttached("PressTintBrush", typeof(Brush), typeof(RevealElement), new PropertyMetadata(Brushes.White));
 
         public static bool GetIsHoverLightEnabled(DependencyObject obj)
         {

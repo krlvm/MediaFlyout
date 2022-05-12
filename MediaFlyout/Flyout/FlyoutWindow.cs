@@ -33,7 +33,7 @@ namespace MediaFlyout.Flyout
             SizeToContent = SizeToContent.Height;
             ResizeMode = ResizeMode.NoResize;
             UseLayoutRounding = false;
-            Background = new SolidColorBrush(Color.FromArgb(1, 0, 0, 0));
+            Background = new SolidColorBrush(Color.FromArgb(1, 128, 128, 128));
             BorderThickness = new Thickness(0);
             ShowInTaskbar = false;
             Visibility = Visibility.Hidden;
@@ -46,6 +46,8 @@ namespace MediaFlyout.Flyout
             if (Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2))
             {
                 this.EnableRoundedCornersIfApplicable();
+                Resources["FluentButtonRadius"] = 4;
+                Resources["FluentCornerRadius"] = new CornerRadius(4);
             }
 
             ThemeHelper.Instance.OnThemeChanged += Theme_ThemeChanged;
