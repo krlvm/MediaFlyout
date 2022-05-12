@@ -45,7 +45,6 @@ namespace MediaFlyout.Flyout
 
             if (Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2))
             {
-                this.EnableRoundedCornersIfApplicable();
                 Resources["FluentButtonRadius"] = 4;
                 Resources["FluentCornerRadius"] = new CornerRadius(4);
             }
@@ -76,6 +75,7 @@ namespace MediaFlyout.Flyout
         private void Window_Loaded(object sender, EventArgs e)
         {
             this.Cloak();
+            this.EnableRoundedCornersIfApplicable();
             this.ApplyExtendedWindowStyle(User32.WS_EX_TOOLWINDOW);
         }
 

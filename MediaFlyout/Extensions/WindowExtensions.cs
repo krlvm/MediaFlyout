@@ -25,7 +25,7 @@ namespace MediaFlyout.Extensions
         public static void Cloak(this Window window, bool hide = true)
         {
             int attributeValue = hide ? 1 : 0;
-            DwmApi.DwmSetWindowAttribute(window.GetHandle(), DwmApi.DWMWINDOWATTRIBUTE.DWMA_CLOAK, ref attributeValue, Marshal.SizeOf(attributeValue));
+            DwmApi.DwmSetWindowAttribute(window.GetHandle(), DwmApi.DWMA_CLOAK, ref attributeValue, Marshal.SizeOf(attributeValue));
         }
 
         public static void EnableRoundedCornersIfApplicable(this Window window)
@@ -33,7 +33,7 @@ namespace MediaFlyout.Extensions
             if (Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2))
             {
                 int attributeValue = (int)DwmApi.DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND;
-                DwmApi.DwmSetWindowAttribute(window.GetHandle(), DwmApi.DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE, ref attributeValue, Marshal.SizeOf(attributeValue));
+                DwmApi.DwmSetWindowAttribute(window.GetHandle(), DwmApi.DWMWA_WINDOW_CORNER_PREFERENCE, ref attributeValue, Marshal.SizeOf(attributeValue));
             }
         }
 
@@ -96,7 +96,7 @@ namespace MediaFlyout.Extensions
 
         public static IntPtr GetHandle(this Window window)
         {
-            return new WindowInteropHelper(window).Handle;
+            return new WindowInteropHelper(window).EnsureHandle();
         }
     }
 }
