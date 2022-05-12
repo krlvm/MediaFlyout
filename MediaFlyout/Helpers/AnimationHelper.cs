@@ -4,6 +4,7 @@ using System.Windows.Media.Animation;
 using MediaFlyout.Interop;
 using MediaFlyout.Extensions;
 using MediaFlyout.Flyout;
+using System.Threading.Tasks;
 
 namespace MediaFlyout.Helpers
 {
@@ -142,12 +143,12 @@ namespace MediaFlyout.Helpers
 
         public static void HideFlyout(FlyoutWindow window)
         {
-            var onCompleted = new EventHandler((s, e) =>
+            window.Tray.isClosing = true;
+            var onCompleted = new EventHandler(async (s, e) =>
             {
                 window.Cloak();
                 window.Left = 999999;
-                window.Tray.isClosing = true;
-                System.Threading.Thread.Sleep(System.Windows.Forms.SystemInformation.DoubleClickTime / 2);
+                await Task.Delay(System.Windows.Forms.SystemInformation.DoubleClickTime);
                 window.Visibility = Visibility.Hidden;
                 window.Tray.isClosing = false;
             });
