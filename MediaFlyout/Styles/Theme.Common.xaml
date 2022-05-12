@@ -4,7 +4,7 @@
 
     <sys:Double x:Key="FluentButtonRadius">0</sys:Double>
     <CornerRadius x:Key="FluentCornerRadius">0</CornerRadius>
-    
+
     <SolidColorBrush x:Key="SystemBaseLowColorBrush" Color="{DynamicResource SystemBaseLowColor}" />
     <SolidColorBrush x:Key="SystemBaseMediumLowColorBrush" Color="{DynamicResource SystemBaseMediumLowColor}" />
     <SolidColorBrush x:Key="SystemBaseMediumColorBrush" Color="{DynamicResource SystemBaseMediumColor}" />
@@ -24,7 +24,11 @@
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Rectangle Margin="-4" StrokeThickness="2" Stroke="{DynamicResource SystemAltHighColor}"/>
+                    <Border BorderThickness="2" Margin="-4" CornerRadius="{DynamicResource FluentCornerRadius}">
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="{DynamicResource SystemBaseHighColor}" />
+                        </Border.BorderBrush>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

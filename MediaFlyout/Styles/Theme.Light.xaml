@@ -14,7 +14,7 @@
     <Color x:Key="SystemAltHighColor">#FFFFFFFF</Color>
 
     <Color x:Key="FluentButtonBackgroundColor">#66FFFFFF</Color>
-    <Color x:Key="FluentButtonHoverBackgroundColor">#9AFFFFFF</Color>
+    <Color x:Key="FluentButtonHoverBackgroundColor">#99FFFFFF</Color>
     <Color x:Key="FluentButtonRevealEffectColor">#EEFFFFFF</Color>
     <Color x:Key="FluentButtonDisabledForegroundColor">#66000000</Color>
 

@@ -19,6 +19,12 @@ namespace MediaFlyout.Helpers
 
         private async void Icon_OnClick(object sender, MouseEventArgs args)
         {
+            if (args.Button != MouseButtons.Left)
+            {
+                Click?.Invoke(this, args);
+                return;
+            }
+
             isSingleClick = true;
             await Task.Delay(TimeSpan.FromMilliseconds(SystemInformation.DoubleClickTime / 4));
 

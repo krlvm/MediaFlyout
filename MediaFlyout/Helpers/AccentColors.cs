@@ -65,7 +65,7 @@ namespace MediaFlyout.Helpers
             ImmersiveSystemAccentLight3Brush = CreateBrush(ImmersiveSystemAccentLight3);
         }
 
-        private static Brush CreateBrush(Color color)
+        public static Brush CreateBrush(Color color)
         {
             var brush = new SolidColorBrush(color);
             brush.Freeze();

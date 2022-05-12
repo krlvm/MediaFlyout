@@ -157,25 +157,6 @@
                                         </DoubleAnimation>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <animation:BrushAnimation Storyboard.TargetProperty="(TextElement.Foreground)" Storyboard.TargetName="contentPresenter"
-                                                                  Duration="0:0:0.100" AutoReverse="False">
-                                            <animation:BrushAnimation.To>
-                                                <SolidColorBrush Color="{DynamicResource FluentButtonDisabledForegroundColor}"/>
-                                            </animation:BrushAnimation.To>
-                                            <animation:BrushAnimation.EasingFunction>
-                                                <SineEase EasingMode="EaseInOut"/>
-                                            </animation:BrushAnimation.EasingFunction>
-                                        </animation:BrushAnimation>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="border"
-                                                         To="0" Duration="0:0:0.100" AutoReverse="False">
-                                            <DoubleAnimation.EasingFunction>
-                                                <SineEase EasingMode="EaseInOut"/>
-                                            </DoubleAnimation.EasingFunction>
-                                        </DoubleAnimation>
-                                    </Storyboard>
-                                </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -267,6 +248,14 @@
                             <Setter TargetName="pressTintLayer" Property="Visibility" Value="Visible" />
                             <Setter TargetName="borderMouseOver" Property="Opacity"
                                     Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=(local:RevealElement.PressBorderOpacity)}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="TextElement.Foreground" TargetName="contentPresenter">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource FluentButtonDisabledForegroundColor}" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Opacity" TargetName="border" Value="0" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
