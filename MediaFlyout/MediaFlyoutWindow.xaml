@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:MediaFlyout"
         xmlns:flyout="clr-namespace:MediaFlyout.Flyout"
         xmlns:p = "clr-namespace:MediaFlyout.Properties"
-        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
-        mc:Ignorable="d"
-        Title="{x:Static p:Resources.Window_Title}" Height="450" Width="450"
+        xmlns:fw="clr-namespace:MediaFlyout.FluentWPF"
+        mc:Ignorable="d local p"
+        Height="450" Width="450"
         fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}">
     <Grid>
         <StackPanel Margin="0,8" x:Name="SessionsStackPanel" />

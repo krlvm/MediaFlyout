@@ -1,0 +1,41 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="SystemBaseLowColorBrush" Color="{DynamicResource SystemBaseLowColor}" />
+    <SolidColorBrush x:Key="SystemBaseMediumLowColorBrush" Color="{DynamicResource SystemBaseMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemBaseMediumColorBrush" Color="{DynamicResource SystemBaseMediumColor}" />
+    <SolidColorBrush x:Key="SystemBaseMediumHighColorBrush" Color="{DynamicResource SystemBaseMediumHighColor}" />
+    <SolidColorBrush x:Key="SystemBaseHighColorBrush" Color="{DynamicResource SystemBaseHighColor}" />
+
+    <SolidColorBrush x:Key="SystemAltLowColorBrush" Color="{DynamicResource SystemAltLowColor}" />
+    <SolidColorBrush x:Key="SystemAltMediumLowColorBrush" Color="{DynamicResource SystemAltMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemAltMediumColorBrush" Color="{DynamicResource SystemAltMediumColor}" />
+    <SolidColorBrush x:Key="SystemAltMediumHighColorBrush" Color="{DynamicResource SystemAltMediumHighColor}" />
+    <SolidColorBrush x:Key="SystemAltHighColorBrush" Color="{DynamicResource SystemAltHighColor}" />
+
+    <SolidColorBrush x:Key="FluentButtonBackgroundBrush" Color="{DynamicResource FluentButtonBackgroundColor}" />
+    <Style x:Key="FluentButton" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonRevealStyle}">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundBrush}" />
+    </Style>
+
+    <Style x:Key="FluentFocusVisualStyle">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Margin="-4" StrokeThickness="2" Stroke="{DynamicResource ThemeContrastColor}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type Control}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FluentFocusVisualStyle}" />
+
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
+        <Setter Property="TextOptions.TextHintingMode" Value="Auto" />
+        <Setter Property="RenderOptions.ClearTypeHint" Value="Auto" />
+    </Style>
+
+</ResourceDictionary>

@@ -119,56 +119,6 @@ namespace MediaFlyout.ViewModels
 
         #endregion
 
-        #region Additional Control Buttons
-
-        private bool _IsRewindEnabled;
-        public bool IsRewindEnabled
-        {
-            get { return _IsRewindEnabled; }
-            set { if (!value.Equals(_IsRewindEnabled)) { _IsRewindEnabled = value; OnPropertyChanged(); } }
-        }
-
-        private bool _IsShuffleEnabled;
-        public bool IsShuffleEnabled
-        {
-            get { return _IsShuffleEnabled; }
-            set { if (!value.Equals(_IsShuffleEnabled)) { _IsShuffleEnabled = value; if (!value) { IsShuffleActive = null; } OnPropertyChanged(); } }
-        }
-        private bool? _IsShuffleActive;
-        public bool? IsShuffleActive
-        {
-            get { return _IsShuffleActive; }
-            set { if (!IsShuffleEnabled) { value = null; } if (!value.Equals(_IsShuffleActive)) { _IsShuffleActive = value; OnPropertyChanged(); } }
-        }
-
-        private bool _IsRepeatEnabled;
-        public bool IsRepeatEnabled
-        {
-            get { return _IsRepeatEnabled; }
-            set { if (!value.Equals(_IsRepeatEnabled)) { _IsRepeatEnabled = value; if (!value) { IsRepeatActive = null; } OnPropertyChanged(); } }
-        }
-        private bool? _IsRepeatActive;
-        public bool? IsRepeatActive
-        {
-            get { return _IsRepeatActive; }
-            set { if (!IsRepeatEnabled) { value = null; } if (!value.Equals(_IsRepeatActive)) { _IsRepeatActive = value; OnPropertyChanged(); } }
-        }
-        private string _RepeatButton;
-        public string RepeatButton
-        {
-            get { return _RepeatButton; }
-            set { if (!value.Equals(_RepeatButton)) { _RepeatButton = value; OnPropertyChanged(); } }
-        }
-
-        private bool _IsStopEnabled;
-        public bool IsStopEnabled
-        {
-            get { return _IsStopEnabled; }
-            set { if (!value.Equals(_IsStopEnabled)) { _IsStopEnabled = value; OnPropertyChanged(); } }
-        }
-
-        #endregion
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
 using Windows.Media.Control;
 using Microsoft.Win32;
-using MediaFlyout.Helpers;
 using MediaFlyout.Views;
 using MediaFlyout.Flyout;
 

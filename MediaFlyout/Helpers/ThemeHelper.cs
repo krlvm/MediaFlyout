@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Windows.Media;
 using MediaFlyout.Extensions;
+using MediaFlyout.Styles;
 using MediaFlyout.Utilities;
 
 namespace MediaFlyout.Helpers
@@ -8,22 +8,34 @@ namespace MediaFlyout.Helpers
     public sealed class ThemeHelper
     {
         private const string REG_PERSONALIZATION_KEY = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+
+        private const string SYSTEM_THEME_VALUE = "SystemUsesLightTheme";
+        private const string APPS_THEME_VALUE = "AppsUseLightTheme";
         private const string ACCENT_SURFACE_VALUE = "ColorPrevalence";
         private const string ACRYLIC_VALUE = "EnableTransparency";
 
-        private RegistryWatcher regAccentSurfaceWatcher;
-        private RegistryWatcher regAcrylicWatcher;
         public event EventHandler OnThemeChanged;
 
-        public ThemeHelper()
+        private static ThemeHelper _instance = null;
+        public static ThemeHelper Instance
         {
-            regAccentSurfaceWatcher = RegistryWatcher.WatchUser(REG_PERSONALIZATION_KEY, ACCENT_SURFACE_VALUE, HandleThemeChange);
-            regAcrylicWatcher = RegistryWatcher.WatchUser(REG_PERSONALIZATION_KEY, ACRYLIC_VALUE, HandleThemeChange);
-
-            SourceChord.FluentWPF.SystemTheme.ThemeChanged += HandleThemeChange;
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new ThemeHelper();
+                }
+                return _instance;
+            }
         }
 
-        private void HandleThemeChange(object sender, EventArgs e)
+        private ThemeHelper()
+        {
+            AccentColors.Initialize();
+            AccentColors.WatchAccentColors();
+        }
+
+        internal void HandleThemeChange(object sender, EventArgs e)
         {
             if (OnThemeChanged != null)
             {
@@ -31,63 +43,42 @@ namespace MediaFlyout.Helpers
             }
         }
 
-        public void Dispose()
+        private void Dispose()
         {
-            regAccentSurfaceWatcher.Dispose();
-            regAcrylicWatcher.Dispose();
-
-            SourceChord.FluentWPF.SystemTheme.ThemeChanged -= HandleThemeChange;
+            OnThemeChanged = null;
         }
 
-        public static FlyoutTheme GetTheme()
+        public static ColorScheme SystemTheme
         {
-            return new FlyoutTheme
+            get
             {
-                SystemTheme = Environment.OSVersion.IsLessThan(OSVersions.VER_19H1) ? ColorScheme.Dark : (
-                    SourceChord.FluentWPF.SystemTheme.WindowsTheme == SourceChord.FluentWPF.WindowsTheme.Dark ? ColorScheme.Dark : ColorScheme.Light
-                ),
-                AccentColor = SourceChord.FluentWPF.AccentColors.ImmersiveSystemAccentDark1,
-                ShowAccentColorOnSurface = IsShowAccentColorOnSurface(),
-                AcrylicEnabled = IsAcrylicEnabled()
-            };
+                if (Environment.OSVersion.IsLessThan(OSVersions.VER_19H1)) return ColorScheme.Dark;
+                return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, SYSTEM_THEME_VALUE) ? ColorScheme.Light : ColorScheme.Dark;
+            }
         }
 
-        public static bool IsShowAccentColorOnSurface()
+        public static ColorScheme Apps
         {
-            return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, ACCENT_SURFACE_VALUE);
+            get
+            {
+                return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, APPS_THEME_VALUE) ? ColorScheme.Light : ColorScheme.Dark;
+            }
         }
 
-        public static bool IsAcrylicEnabled()
+        public static bool ShowAccentColorOnSurface
         {
-            return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, ACRYLIC_VALUE);
+            get
+            {
+                return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, ACCENT_SURFACE_VALUE);
+            }
+        }
+
+        public static bool AcrylicEnabled
+        {
+            get
+            {
+                return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, ACRYLIC_VALUE);
+            }
         }
     }
-
-    public enum ColorScheme
-    {
-        Light, Dark
-    }
-    public static class ColorSchemeExtensions
-    {
-        public static ColorScheme Inverse(this ColorScheme scheme)
-        {
-            return scheme == ColorScheme.Light ? ColorScheme.Dark : ColorScheme.Light;
-        }
-        public static Color ToColor(this ColorScheme scheme)
-        {
-            return scheme == ColorScheme.Light ? Colors.White : Colors.Black;
-        }
-        public static System.Drawing.Color ToTrayColor(this ColorScheme scheme)
-        {
-            return scheme == ColorScheme.Light ? System.Drawing.Color.White : System.Drawing.Color.Black;
-        }
-    }
-
-    public struct FlyoutTheme
-    {
-        public ColorScheme SystemTheme;
-        public Color AccentColor;
-        public bool ShowAccentColorOnSurface;
-        public bool AcrylicEnabled;
-    } 
 }

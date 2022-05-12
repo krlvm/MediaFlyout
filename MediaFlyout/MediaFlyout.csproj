@@ -66,9 +66,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentWPF, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentWPF.0.10.2\lib\net45\FluentWPF.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -96,19 +93,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\ActivityBooleanToBrushConverter.cs" />
-    <Compile Include="Converters\RewindAvailabilityToHorizontalAlignmentConverter.cs" />
+    <Compile Include="FluentWPF\Animations\BrushAnimation.cs" />
+    <Compile Include="FluentWPF\Converters\RectConverter.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\OperatingSystemExtensions.cs" />
     <Compile Include="Extensions\WindowExtensions.cs" />
+    <Compile Include="FluentWPF\PointerTracker.cs" />
     <Compile Include="Flyout\FlyoutWindow.cs" />
     <Compile Include="Flyout\FlyoutTray.cs" />
+    <Compile Include="Helpers\AccentColors.cs" />
     <Compile Include="Helpers\AnimationHelper.cs" />
     <Compile Include="AppInformation\SourceAppInfo.cs" />
     <Compile Include="AppInformation\SourceAppInfoData.cs" />
     <Compile Include="AppInformation\SourceDesktopAppInfo.cs" />
     <Compile Include="AppInformation\SourceModernAppInfo.cs" />
     <Compile Include="Helpers\ThemeHelper.cs" />
+    <Compile Include="Interop\UxTheme.cs" />
+    <Compile Include="Styles\ColorScheme.cs" />
+    <Compile Include="Styles\ResourceDictionaryEx.cs" />
     <Compile Include="Utilities\RegistryUtil.cs" />
     <Compile Include="Utilities\TrayClickListener.cs" />
     <Compile Include="Utilities\TrayIconUtil.cs" />
@@ -126,14 +128,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.ru.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\ImageUtility.cs" />
+    <Compile Include="Utilities\ImageUtil.cs" />
     <Compile Include="ViewModels\SessionItemViewModel.cs" />
     <Compile Include="Views\SessionItem.xaml.cs">
       <DependentUpon>SessionItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="MediaFlyoutTray.cs" />
     <Compile Include="Utilities\IconExtractor.cs" />
-    <Compile Include="Utilities\RegistryWatcher.cs" />
     <Page Include="MediaFlyoutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -146,6 +147,26 @@
       <DependentUpon>MediaFlyoutWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="FluentWPF\Styles\Button.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Theme.Common.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Theme.Dark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\Theme.Light.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Theme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SessionItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -206,6 +227,7 @@
   <ItemGroup>
     <None Include="Resources\Icon_Pause.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

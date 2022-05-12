@@ -1,6 +1,7 @@
 ﻿using MediaFlyout.Extensions;
 using MediaFlyout.Helpers;
 using MediaFlyout.Interop;
+using MediaFlyout.Styles;
 using System;
 using System.Threading;
 using System.Windows;
@@ -47,8 +48,7 @@ namespace MediaFlyout.Flyout
                 this.EnableRoundedCornersIfApplicable();
             }
 
-            themeHelper = new ThemeHelper();
-            themeHelper.OnThemeChanged += Theme_ThemeChanged;
+            ThemeHelper.Instance.OnThemeChanged += Theme_ThemeChanged;
             Theme_Update();
 
             Left = 999999;
@@ -58,6 +58,7 @@ namespace MediaFlyout.Flyout
 
         public virtual void RaiseFlyout()
         {
+            Theme_Update();
             AnimationHelper.ShowFlyout(this, true);
         }
 
@@ -108,22 +109,29 @@ namespace MediaFlyout.Flyout
 
         #region Theme Management
 
-        private ThemeHelper themeHelper;
-        private ColorScheme theme_last;
+        private readonly Color COLOR_LIGHT_TINT = Color.FromRgb(228, 228, 228);
+        private readonly Color COLOR_LIGHT_FALLBACK = Color.FromRgb(228, 228, 228);
+        private readonly Color COLOR_DARK_TINT = Color.FromRgb(36, 36, 36);
+        private readonly Color COLOR_DARK_FALLBACK = Color.FromRgb(31, 31, 31);
 
         private bool _needReset = false;
-        private Color tintColor;
-        private double _tintOpacity;
-        private double tintOpacity
+
+        private ColorScheme? _theme = null;
+        private bool? _showAccentColorOnSurface = null;
+        private bool? _useAcrylic = null;
+        private Color _accentTintColor;
+        private Color _tintColor;
+        private double __tintOpacity;
+        private double _tintOpacity
         {
-            get { return _tintOpacity; }
+            get { return __tintOpacity; }
             set
             {
-                if (_tintOpacity != value && (_tintOpacity == 1 || value == 1))
+                if (__tintOpacity != value && (__tintOpacity == 1 || value == 1))
                 {
                     _needReset = true;
                 }
-                _tintOpacity = value;
+                __tintOpacity = value;
             }
         }
 
@@ -155,56 +163,60 @@ namespace MediaFlyout.Flyout
                 }
             }
 
-            this.ApplyAccentPolicy(tintOpacity, tintColor, flags);
+            this.ApplyAccentPolicy(_tintOpacity, _tintColor, flags);
         }
 
         private void Theme_Update()
         {
-            var theme = ThemeHelper.GetTheme();
+            var theme = ThemeHelper.SystemTheme;
+            var useAcrylic = ThemeHelper.AcrylicEnabled;
+            var showAccentColorOnSurface = ThemeHelper.ShowAccentColorOnSurface;
+            var accentTintColor = AccentColors.ImmersiveSystemAccentDark1;
+
+            if (theme == _theme && useAcrylic == _useAcrylic && showAccentColorOnSurface == _showAccentColorOnSurface)
+            {
+                if (!showAccentColorOnSurface || (accentTintColor == _accentTintColor))
+                {
+                    return;
+                }
+            }
+
+            _theme = theme;
+            _useAcrylic = useAcrylic;
+            _showAccentColorOnSurface = showAccentColorOnSurface;
+
+            ResourceDictionaryEx.Theme = theme;
 
             double tintOpacity;
             Color tintColor, fallbackColor;
 
-            Color colorScheme = theme.SystemTheme.ToColor();
-            Color contrastColor = theme.SystemTheme.Inverse().ToColor();
-
-            if (theme.SystemTheme == ColorScheme.Light)
+            if (theme == ColorScheme.Light)
             {
-                SourceChord.FluentWPF.ResourceDictionaryEx.GlobalTheme = SourceChord.FluentWPF.ElementTheme.Light;
-                fallbackColor = Color.FromRgb(228, 228, 228);
-                tintColor = Color.FromRgb(228, 228, 228);
+                fallbackColor = COLOR_LIGHT_FALLBACK;
+                tintColor = COLOR_LIGHT_TINT;
                 tintOpacity = 0.853;
-                _tray?.SetIconColor(System.Drawing.Color.Black);
             }
             else
             {
-                SourceChord.FluentWPF.ResourceDictionaryEx.GlobalTheme = SourceChord.FluentWPF.ElementTheme.Dark;
-                if (theme.ShowAccentColorOnSurface)
+                if (showAccentColorOnSurface)
                 {
-                    fallbackColor = theme.AccentColor;
-                    tintColor = theme.AccentColor;
+                    _accentTintColor = accentTintColor;
+                    fallbackColor = accentTintColor;
+                    tintColor = accentTintColor;
                     tintOpacity = 0.8;
                 }
                 else
                 {
-                    fallbackColor = Color.FromRgb(31, 31, 31);
-                    tintColor = Color.FromRgb(36, 36, 36);
+                    fallbackColor = COLOR_DARK_FALLBACK;
+                    tintColor = COLOR_DARK_TINT;
                     tintOpacity = 0.85;
                 }
-                _tray?.SetIconColor(System.Drawing.Color.White);
             }
+            _tray?.SetIconColor(theme.Inverse().ToTrayColor());
 
-            this.tintOpacity = theme.AcrylicEnabled ? tintOpacity : 1;
-            this.tintColor = theme.AcrylicEnabled ? tintColor : fallbackColor;
-            Resources["FlyoutColorScheme"] = colorScheme;
-            Resources["FlyoutContrastColor"] = new SolidColorBrush(contrastColor);
-            Resources["FluentRevealEnabled"] = theme.AcrylicEnabled;
-
-            if (theme_last != theme.SystemTheme)
-            {
-                Theme_ThemeUpdated();
-            }
-            theme_last = theme.SystemTheme;
+            _tintOpacity = useAcrylic ? tintOpacity : 1;
+            _tintColor = useAcrylic ? tintColor : fallbackColor;
+            Resources["FluentRevealEnabled"] = useAcrylic;
 
             if (Visibility == Visibility.Visible)
             {

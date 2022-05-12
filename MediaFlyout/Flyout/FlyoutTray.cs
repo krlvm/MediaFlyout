@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
 using MediaFlyout.Helpers;
+using MediaFlyout.Styles;
 
 namespace MediaFlyout
 {
@@ -31,7 +32,7 @@ namespace MediaFlyout
             listener.Click += OnClick;
             listener.DoubleClick += OnDoubleClick;
 
-            SetIconColor(ThemeHelper.GetTheme().SystemTheme.Inverse().ToTrayColor(), true);
+            SetIconColor(ThemeHelper.SystemTheme.Inverse().ToTrayColor(), true);
         }
 
         #region Click Handlers
