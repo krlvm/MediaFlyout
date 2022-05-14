@@ -32,7 +32,8 @@ namespace MediaFlyout.Flyout
             AllowsTransparency = true;
             SizeToContent = SizeToContent.Height;
             ResizeMode = ResizeMode.NoResize;
-            UseLayoutRounding = false;
+            UseLayoutRounding = true;
+            SnapsToDevicePixels = true;
             Background = new SolidColorBrush(Color.FromArgb(1, 128, 128, 128));
             BorderThickness = new Thickness(0);
             ShowInTaskbar = false;
@@ -219,6 +220,7 @@ namespace MediaFlyout.Flyout
             _tintOpacity = useAcrylic ? tintOpacity : 1;
             _tintColor = useAcrylic ? tintColor : fallbackColor;
             Resources["FluentRevealEnabled"] = useAcrylic;
+            Resources["FluentRevealEffectsVisibility"] = useAcrylic ? Visibility.Visible : Visibility.Hidden;
 
             if (Visibility == Visibility.Visible)
             {

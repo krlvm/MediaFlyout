@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Windows.Media.Control;
 using static System.WindowsRuntimeSystemExtensions;
 
@@ -139,14 +140,14 @@ namespace MediaFlyout.Views
             await session.TrySkipNextAsync();
         }
 
-        private void DoubleClick(object sender, RoutedEventArgs e)
+        private void SessionView_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             sourceInfo?.Activate();
         }
 
-        private void AppContainer_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void SessionView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Enter)
+            if (e.Key == Key.Enter && !e.Handled)
             {
                 sourceInfo?.Activate();
             }
@@ -178,8 +179,6 @@ namespace MediaFlyout.Views
             {
                 sourceInfo.InfoFetched += SourceAppInfo_InfoFetched;
                 sourceInfo.FetchInfosAsync();
-
-                InfoContainer.MouseDown += DoubleClick;
             }
         }
 

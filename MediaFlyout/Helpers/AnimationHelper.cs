@@ -10,8 +10,8 @@ namespace MediaFlyout.Helpers
 {
     class AnimationHelper
     {
-        private const double ANIMATION_TIME_ENTRACE = 0.3;
-        private const double ANIMATION_TIME_EXIT = 0.08;
+        private const double ANIMATION_TIME_ENTRACE = 0.5;
+        private const double ANIMATION_TIME_EXIT = 0.1;
 
         private static FlyoutAnimationScheme CalculateFlyoutAnimationScheme(FlyoutWindow window, bool topmost = false)
         {
@@ -102,7 +102,7 @@ namespace MediaFlyout.Helpers
                 Duration = TimeSpan.FromSeconds(ANIMATION_TIME_ENTRACE),
                 From = scheme.From,
                 To = scheme.To,
-                EasingFunction = new CubicEase
+                EasingFunction = new QuinticEase
                 {
                     EasingMode = easingMode
                 }
@@ -115,7 +115,7 @@ namespace MediaFlyout.Helpers
                 Duration = TimeSpan.FromSeconds(ANIMATION_TIME_ENTRACE),
                 From = 0.8,
                 To = 1,
-                EasingFunction = new CubicEase
+                EasingFunction = new QuinticEase
                 {
                     EasingMode = easingMode
                 }
@@ -171,7 +171,7 @@ namespace MediaFlyout.Helpers
                 Duration = TimeSpan.FromSeconds(ANIMATION_TIME_EXIT),
                 From = 1,
                 To = 0.8,
-                EasingFunction = new CubicEase
+                EasingFunction = new QuinticEase
                 {
                     EasingMode = easingMode
                 }
@@ -184,7 +184,7 @@ namespace MediaFlyout.Helpers
                 Duration = TimeSpan.FromSeconds(ANIMATION_TIME_EXIT),
                 From = scheme.To,
                 To = scheme.From,
-                EasingFunction = new CubicEase
+                EasingFunction = new QuinticEase
                 {
                     EasingMode = easingMode
                 }
