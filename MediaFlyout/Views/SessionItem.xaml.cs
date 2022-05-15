@@ -142,15 +142,15 @@ namespace MediaFlyout.Views
 
         private void SessionView_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (e.OriginalSource == ControlsContainer || e.Handled) return;
             sourceInfo?.Activate();
         }
 
-        private void SessionView_KeyDown(object sender, KeyEventArgs e)
+        private void SessionView_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && !e.Handled)
-            {
-                sourceInfo?.Activate();
-            }
+            if (e.Key != Key.Enter || e.Handled) return;
+            if (e.OriginalSource != null && e.OriginalSource is Button) return;
+            sourceInfo?.Activate();
         }
 
         #endregion
