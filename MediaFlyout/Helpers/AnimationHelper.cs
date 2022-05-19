@@ -71,6 +71,16 @@ namespace MediaFlyout.Helpers
         {
             var scheme = CalculateFlyoutAnimationScheme(window);
 
+            var onCompleted = new EventHandler((s, e) =>
+            {
+                window.Cloak(false);
+                window.Topmost = topmost;
+                //BringTaskbarToFront();
+                window.IsRaising = false;
+                window.Focus();
+                window.Activate();
+            });
+
             window.IsRaising = true;
             BringTaskbarToFront();
             if (scheme.Property == Window.TopProperty) window.Top = 999999; else window.Left = 999999;
@@ -90,7 +100,7 @@ namespace MediaFlyout.Helpers
                 {
                     window.Left = scheme.To;
                 }
-                window.Cloak(false);
+                onCompleted(null, null);
                 return;
             }
 
@@ -127,14 +137,7 @@ namespace MediaFlyout.Helpers
             sb.FillBehavior = FillBehavior.Stop;
             sb.Children.Add(entraceAnimation);
             sb.Children.Add(fadeAnimation);
-            sb.Completed += (object sender, EventArgs e) =>
-            {
-                window.Topmost = topmost;
-                //BringTaskbarToFront();
-                window.Focus();
-                window.Activate();
-                window.IsRaising = false;
-            };
+            sb.Completed += onCompleted;
 
             window.Cloak(false);
 
