@@ -79,6 +79,17 @@ namespace MediaFlyout.Helpers
                 window.IsRaising = false;
                 window.Focus();
                 window.Activate();
+
+#if !DEBUG
+                Task.Run(async delegate
+                {
+                    await Task.Delay(1500);
+                    if (!window.IsFocused && window.IsVisible && !window.Tray.isClosing)
+                    {
+                        HideFlyout(window);
+                    }
+                });
+#endif
             });
 
             window.IsRaising = true;
