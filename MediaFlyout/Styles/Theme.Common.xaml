@@ -17,6 +17,8 @@
     <SolidColorBrush x:Key="SystemAltMediumHighColorBrush" Color="{DynamicResource SystemAltMediumHighColor}" />
     <SolidColorBrush x:Key="SystemAltHighColorBrush" Color="{DynamicResource SystemAltHighColor}" />
 
+    <SolidColorBrush x:Key="FlyoutCaptionTextForegroundColorBrush" Color="{DynamicResource FlyoutCaptionTextForegroundColor}" />
+
     <SolidColorBrush x:Key="FluentButtonBackgroundBrush" Color="{DynamicResource FluentButtonBackgroundColor}" />
     <SolidColorBrush x:Key="FluentButtonHoverBackgroundBrush" Color="{DynamicResource FluentButtonHoverBackgroundColor}" />
 

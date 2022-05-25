@@ -13,6 +13,8 @@
     <Color x:Key="SystemAltMediumHighColor">#CC000000</Color>
     <Color x:Key="SystemAltHighColor">#FF000000</Color>
 
+    <Color x:Key="FlyoutCaptionTextForegroundColor">#66FFFFFF</Color>
+
     <Color x:Key="FluentButtonBackgroundColor">#30FFFFFF</Color>
     <Color x:Key="FluentButtonHoverBackgroundColor">#3FFFFFFF</Color>
     <Color x:Key="FluentButtonRevealEffectColor">#20FFFFFF</Color>

@@ -44,7 +44,7 @@
                     <TextBlock x:Name="AppName" FontSize="12" Text="{Binding AppName, FallbackValue='App Name'}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SystemBaseHighColorBrush}" VerticalAlignment="Center" />
                 </StackPanel>
                 <TextBlock Grid.Row="1" x:Name="MediaTitle" FontSize="14" Text="{Binding Title, FallbackValue='Media Title'}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SystemBaseHighColorBrush}" />
-                <TextBlock Grid.Row="2" x:Name="MediaArtist" FontSize="12" Text="{Binding Artist, FallbackValue='Media Artist'}" Foreground="{DynamicResource SystemBaseMediumHighColorBrush}" />
+                <TextBlock Grid.Row="2" x:Name="MediaArtist" FontSize="12" Text="{Binding Artist, FallbackValue='Media Artist'}" Foreground="{DynamicResource FlyoutCaptionTextForegroundColorBrush}" />
             </Grid>
 
             <StackPanel x:Name="ControlsContainer" Grid.Column="2" VerticalAlignment="Center" Height="40" Margin="4,0" HorizontalAlignment="Center" Orientation="Horizontal">
