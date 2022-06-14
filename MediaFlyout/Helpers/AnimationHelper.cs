@@ -10,8 +10,8 @@ namespace MediaFlyout.Helpers
 {
     class AnimationHelper
     {
-        private const double ANIMATION_TIME_ENTRACE = 0.5;
-        private const double ANIMATION_TIME_EXIT = 0.1;
+        private static double ANIMATION_TIME_ENTRACE = Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2) ? 0.25 : 0.5;
+        private const  double ANIMATION_TIME_EXIT = 0.1;
 
         private static FlyoutAnimationScheme CalculateFlyoutAnimationScheme(FlyoutWindow window, bool topmost = false)
         {

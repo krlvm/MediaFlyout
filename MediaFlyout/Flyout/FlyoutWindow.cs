@@ -112,10 +112,12 @@ namespace MediaFlyout.Flyout
 
         #region Theme Management
 
-        private readonly Color COLOR_LIGHT_TINT = Color.FromRgb(228, 228, 228);
-        private readonly Color COLOR_LIGHT_FALLBACK = Color.FromRgb(228, 228, 228);
-        private readonly Color COLOR_DARK_TINT = Color.FromRgb(36, 36, 36);
-        private readonly Color COLOR_DARK_FALLBACK = Color.FromRgb(31, 31, 31);
+        private static bool IS_W11 = Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2);
+
+        private readonly Color COLOR_LIGHT_TINT = IS_W11 ? Color.FromRgb(243, 243, 243) : Color.FromRgb(228, 228, 228);
+        private readonly Color COLOR_LIGHT_FALLBACK = IS_W11 ? Color.FromRgb(238, 238, 238) : Color.FromRgb(228, 228, 228);
+        private readonly Color COLOR_DARK_TINT = IS_W11 ? Color.FromRgb(32, 32, 32) : Color.FromRgb(36, 36, 36);
+        private readonly Color COLOR_DARK_FALLBACK = IS_W11 ? Color.FromRgb(28, 28, 28) : Color.FromRgb(31, 31, 31);
 
         private bool _needReset = false;
 
@@ -174,7 +176,8 @@ namespace MediaFlyout.Flyout
             var theme = ThemeHelper.SystemTheme;
             var useAcrylic = ThemeHelper.AcrylicEnabled;
             var showAccentColorOnSurface = ThemeHelper.ShowAccentColorOnSurface;
-            var accentTintColor = AccentColors.ImmersiveSystemAccentDark1;
+            var accentTintColor = Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2) ?
+                AccentColors.ImmersiveSystemAccentDark2 : AccentColors.ImmersiveSystemAccentDark1;
 
             if (theme == _theme && useAcrylic == _useAcrylic && showAccentColorOnSurface == _showAccentColorOnSurface)
             {
@@ -197,7 +200,7 @@ namespace MediaFlyout.Flyout
             {
                 fallbackColor = COLOR_LIGHT_FALLBACK;
                 tintColor = COLOR_LIGHT_TINT;
-                tintOpacity = 0.853;
+                tintOpacity = IS_W11 ? 0.9 : 0.853;
             }
             else
             {
@@ -206,13 +209,13 @@ namespace MediaFlyout.Flyout
                     _accentTintColor = accentTintColor;
                     fallbackColor = accentTintColor;
                     tintColor = accentTintColor;
-                    tintOpacity = 0.8;
+                    tintOpacity = IS_W11 ? 0.8 : 0.8;
                 }
                 else
                 {
                     fallbackColor = COLOR_DARK_FALLBACK;
                     tintColor = COLOR_DARK_TINT;
-                    tintOpacity = 0.85;
+                    tintOpacity = IS_W11 ? 0.8 : 0.85;
                 }
             }
             _tray?.SetIconColor(theme.Inverse().ToTrayColor());
