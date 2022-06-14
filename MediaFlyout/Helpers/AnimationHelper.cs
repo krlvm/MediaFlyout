@@ -158,6 +158,7 @@ namespace MediaFlyout.Helpers
         public static void HideFlyout(FlyoutWindow window)
         {
             window.Tray.isClosing = true;
+            window.Topmost = false;
             var onCompleted = new EventHandler(async (s, e) =>
             {
                 window.Cloak();
