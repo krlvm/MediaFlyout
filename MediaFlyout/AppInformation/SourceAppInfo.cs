@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using MediaFlyout.Extensions;
 using MediaFlyout.Interop;
 
 namespace MediaFlyout.AppInformation
@@ -58,6 +59,25 @@ namespace MediaFlyout.AppInformation
 
         public static SourceAppInfo FromAppUserModelId(string appUserModelId)
         {
+            if (Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2) && !appUserModelId.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                if ("308046B0AF4A39CB".Equals(appUserModelId) || "6F193CCC56814779".Equals(appUserModelId))
+                {
+                    appUserModelId = "firefox.exe";
+                }
+                else if (appUserModelId.Contains("MSEdge"))
+                {
+                    appUserModelId = "msedge.exe";
+                }
+                else if (appUserModelId.Contains("Chrome"))
+                {
+                    appUserModelId = "chrome.exe";
+                }
+                else if (appUserModelId.Contains("Opera"))
+                {
+                    appUserModelId = "opera.exe";
+                }
+            }
             SourceAppInfoData data = new SourceAppInfoData()
             {
                 AppUserModelId = appUserModelId,

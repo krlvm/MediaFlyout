@@ -8,6 +8,7 @@ namespace MediaFlyout.Extensions
         VER_20H2 = 19042,
 
         VER_11_21H2 = 22000,
+        VER_11_22H2 = 22621,
     }
 
     public static class OperatingSystemExtensions
