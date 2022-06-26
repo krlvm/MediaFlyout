@@ -17,6 +17,7 @@ namespace MediaFlyout
             Process currentProcess = Process.GetCurrentProcess();
             Process.GetProcesses()
                 .Where(process => process.ProcessName == currentProcess.ProcessName)
+                .Where(process => process.SessionId == currentProcess.SessionId)
                 .Where(process => process.Id != currentProcess.Id)
                 .ToList()
                 .ForEach(process => process.Kill());
