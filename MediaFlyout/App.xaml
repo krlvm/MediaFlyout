@@ -14,6 +14,8 @@
 
             <bcl:String x:Key="TrayIconPlay">pack://application:,,,/MediaFlyout;component/Resources/Icon_Play.ico</bcl:String>
             <bcl:String x:Key="TrayIconPause">pack://application:,,,/MediaFlyout;component/Resources/Icon_Pause.ico</bcl:String>
+            <bcl:String x:Key="TrayIconPlay_11">pack://application:,,,/MediaFlyout;component/Resources/Icon_Play_11.ico</bcl:String>
+            <bcl:String x:Key="TrayIconPause_11">pack://application:,,,/MediaFlyout;component/Resources/Icon_Pause_11.ico</bcl:String>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
