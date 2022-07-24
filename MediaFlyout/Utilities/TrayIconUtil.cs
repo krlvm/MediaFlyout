@@ -8,7 +8,6 @@ namespace MediaFlyout.Helpers
     {
         public static Icon LoadIcon(string path, uint dpi, Color color)
         {
-            System.Windows.MessageBox.Show("" + User32.GetSystemMetricsForDpi(User32.SystemMetrics.SM_CXICON, dpi));
             using (var stream = System.Windows.Application.GetResourceStream(new Uri(path)).Stream)
             {
                 using (var icon = new Icon(stream, new Size(
