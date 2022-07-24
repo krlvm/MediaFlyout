@@ -216,18 +216,9 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Icon_Pause_100.ico" />
+    <Resource Include="Resources\Icon_Pause.ico" />
+    <Resource Include="Resources\Icon_Play.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Icon_Play_100.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Icon_Play.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Icon_Pause.ico" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

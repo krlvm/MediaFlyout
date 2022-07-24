@@ -83,6 +83,7 @@ namespace MediaFlyout.Helpers
             }
         }
 
-        public static IntPtr GetHandle() => User32.FindWindow("Shell_TrayWnd", null);
+        public static uint Dpi => User32.GetDpiForWindow(Handle);
+        public static IntPtr Handle => User32.FindWindow("Shell_TrayWnd", null);
     }
 }

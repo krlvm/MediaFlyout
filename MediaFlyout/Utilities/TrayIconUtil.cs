@@ -1,24 +1,24 @@
-﻿using System.Drawing;
-using System.Windows;
-using System.Windows.Forms;
+﻿using MediaFlyout.Interop;
+using System;
+using System.Drawing;
 
 namespace MediaFlyout.Helpers
 {
     class TrayIconUtil
     {
-        public static Icon LoadIcon(Icon iconDefault, Icon iconDpi, Color color)
+        public static Icon LoadIcon(string path, uint dpi, Color color)
         {
-            var dpi = Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth;
-
-            var icon = dpi == 1 ? iconDefault : iconDpi;
-            if (color != Color.White)
+            System.Windows.MessageBox.Show("" + User32.GetSystemMetricsForDpi(User32.SystemMetrics.SM_CXICON, dpi));
+            using (var stream = System.Windows.Application.GetResourceStream(new Uri(path)).Stream)
             {
-                var newIcon = ColorIcon(icon, 1, color);
-                icon.Dispose();
-                return newIcon;
+                using (var icon = new Icon(stream, new Size(
+                    User32.GetSystemMetricsForDpi(User32.SystemMetrics.SM_CXICON, dpi),
+                    User32.GetSystemMetricsForDpi(User32.SystemMetrics.SM_CYICON, dpi))
+                ))
+                {
+                    return ColorIcon(icon, 1, color);
+                }
             }
-
-            return icon;
         }
 
         public static Color TranslateColor(System.Windows.Media.Color color)

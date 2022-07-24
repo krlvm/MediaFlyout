@@ -219,7 +219,7 @@ namespace MediaFlyout.Helpers
 
         public static void BringTaskbarToFront()
         {
-            User32.SetForegroundWindow(WindowsTaskbar.GetHandle());
+            User32.SetForegroundWindow(WindowsTaskbar.Handle);
         }
     }
 

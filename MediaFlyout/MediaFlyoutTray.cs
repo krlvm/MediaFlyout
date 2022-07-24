@@ -88,8 +88,9 @@ namespace MediaFlyout
                 icon?.Dispose();
             }
 
-            icons[0] = TrayIconUtil.LoadIcon(Resources.Icon_Pause_100, Resources.Icon_Pause, color);
-            icons[1] = TrayIconUtil.LoadIcon(Resources.Icon_Play_100,  Resources.Icon_Play, color);
+            var dpi = WindowsTaskbar.Dpi;
+            icons[0] = TrayIconUtil.LoadIcon((string)App.Current.Resources["TrayIconPause"], dpi, color);
+            icons[1] = TrayIconUtil.LoadIcon((string)App.Current.Resources["TrayIconPlay"],  dpi, color);
 
             SetStatus(currentPlaybackStatus, true);
         }

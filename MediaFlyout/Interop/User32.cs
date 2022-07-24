@@ -160,6 +160,22 @@ namespace MediaFlyout.Interop
         public static extern bool EnumThreadWindows(int dwThreadId, EnumThreadDelegate lpfn, IntPtr lParam);
         public delegate bool EnumThreadDelegate(IntPtr hWnd, IntPtr lParam);
 
+        [DllImport("user32.dll", PreserveSig = true)]
+        public static extern uint GetDpiForWindow(IntPtr hWnd);
+
+        public enum SystemMetrics : int
+        {
+            // ...
+            SM_CXICON = 11,
+            SM_CYICON = 12,
+            SM_CXSMICON = 49,
+            SM_CYSMICON = 50
+            // ...
+        }
+
+        [DllImport("user32.dll", PreserveSig = true)]
+        public static extern int GetSystemMetricsForDpi(SystemMetrics nIndex, uint dpi);
+
         #endregion
 
         #region Window Composition
