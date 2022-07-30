@@ -6,6 +6,7 @@ using Windows.Media.Control;
 using Microsoft.Win32;
 using MediaFlyout.Views;
 using MediaFlyout.Flyout;
+using MediaFlyout.Extensions;
 
 namespace MediaFlyout
 {
@@ -27,6 +28,19 @@ namespace MediaFlyout
 
             UpdateSessions();
             UpdateStatus();
+
+            if (Environment.OSVersion.IsWindows11())
+            {
+                Resources["ButtonPlaySize"] = 14.0;
+                Resources["ButtonPrev"] = "\uF8AC";
+                Resources["ButtonNext"] = "\uF8AD";
+            }
+            else
+            {
+                Resources["ButtonPlaySize"] = 18.0;
+                Resources["ButtonPrev"] = "\uE892";
+                Resources["ButtonNext"] = "\uE893";
+            }
 
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
         }

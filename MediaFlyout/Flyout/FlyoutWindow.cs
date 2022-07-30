@@ -44,11 +44,16 @@ namespace MediaFlyout.Flyout
             Closing += Window_Closing;
             PreviewKeyDown += Window_PreviewKeyDown;
 
-            if (Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2))
+            if (Environment.OSVersion.IsWindows11())
             {
                 FontFamily = new FontFamily("Segoe UI Variable Text");
+                Resources["IconFont"] = new FontFamily("Segoe Fluent Icons");
                 Resources["FluentButtonRadius"] = 4;
                 Resources["FluentCornerRadius"] = new CornerRadius(4);
+            }
+            else
+            {
+                Resources["IconFont"] = new FontFamily("Segoe MDL2 Assets");
             }
 
             ThemeHelper.Instance.OnThemeChanged += Theme_ThemeChanged;
@@ -150,7 +155,7 @@ namespace MediaFlyout.Flyout
             }
 
             User32.AccentFlags flags = User32.AccentFlags.DrawAllBorders;
-            if (Environment.OSVersion.IsLessThan(OSVersions.VER_11_21H2))
+            if (!Environment.OSVersion.IsWindows11())
             {
                 switch (WindowsTaskbar.Current.Side)
                 {

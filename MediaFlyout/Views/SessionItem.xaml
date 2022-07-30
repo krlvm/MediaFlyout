@@ -48,9 +48,9 @@
             </Grid>
 
             <StackPanel x:Name="ControlsContainer" Grid.Column="2" VerticalAlignment="Center" Height="40" Margin="4,0" HorizontalAlignment="Center" Orientation="Horizontal">
-                <Button x:Name="Previous" Content="&#xE892;" FontFamily="Segoe MDL2 Assets" FontSize="12" Width="40" IsEnabled="{Binding IsPreviousEnabled}" Click="Previous_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" Margin="0,0,2,0" />
-                <Button x:Name="PlayPause" Content="{Binding ToggleButton, FallbackValue=''}" FontFamily="Segoe MDL2 Assets" FontSize="18" Width="40" IsEnabled="{Binding IsPlayPauseEnabled}" Click="PlayPause_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" />
-                <Button x:Name="Next" Content="&#xE893;" FontFamily="Segoe MDL2 Assets" FontSize="12" Width="40" IsEnabled="{Binding IsNextEnabled}" Click="Next_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" Margin="2,0,0,0" />
+                <Button x:Name="Previous" Content="{DynamicResource ButtonPrev}" FontFamily="{DynamicResource IconFont}" FontSize="12" Width="40" IsEnabled="{Binding IsPreviousEnabled}" Click="Previous_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" Margin="0,0,2,0" />
+                <Button x:Name="PlayPause" Content="{Binding ToggleButton, FallbackValue=''}" FontFamily="{DynamicResource IconFont}" FontSize="{DynamicResource ButtonPlaySize}" Width="40" IsEnabled="{Binding IsPlayPauseEnabled}" Click="PlayPause_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" />
+                <Button x:Name="Next" Content="{DynamicResource ButtonNext}" FontFamily="{DynamicResource IconFont}" FontSize="12" Width="40" IsEnabled="{Binding IsNextEnabled}" Click="Next_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" Margin="2,0,0,0" />
             </StackPanel>
         </Grid>
     </StackPanel>

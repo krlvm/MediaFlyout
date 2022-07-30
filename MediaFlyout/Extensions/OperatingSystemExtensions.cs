@@ -27,5 +27,10 @@ namespace MediaFlyout.Extensions
         {
             return os.Version.Build < (int)version;
         }
+
+        public static bool IsWindows11(this OperatingSystem os)
+        {
+            return Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2);
+        }
     }
 }
