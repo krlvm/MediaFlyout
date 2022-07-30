@@ -168,7 +168,7 @@ namespace MediaFlyout.Flyout
                 }
             }
 
-            this.ApplyAccentPolicy(_tintOpacity, _tintColor, flags);
+            this.ApplyAccentPolicy(_tintOpacity, _tintColor, flags | User32.AccentFlags.Win11Luminosity);
         }
 
         private void Theme_Update()
@@ -215,7 +215,7 @@ namespace MediaFlyout.Flyout
                 {
                     fallbackColor = COLOR_DARK_FALLBACK;
                     tintColor = COLOR_DARK_TINT;
-                    tintOpacity = IS_W11 ? 0.8 : 0.85;
+                    tintOpacity = IS_W11 ? 0.5 : 0.85;
                 }
             }
             _tray?.SetIconColor(theme.Inverse().ToTrayColor());

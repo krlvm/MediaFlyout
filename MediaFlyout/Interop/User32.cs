@@ -203,6 +203,7 @@ namespace MediaFlyout.Interop
         public enum AccentFlags
         {
             None = 0x0,
+            Win11Luminosity = 0x2,
             // ...
             DrawLeftBorder = 0x20,
             DrawTopBorder = 0x40,
