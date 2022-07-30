@@ -46,6 +46,7 @@ namespace MediaFlyout.Flyout
 
             if (Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2))
             {
+                FontFamily = new FontFamily("Segoe UI Variable Text");
                 Resources["FluentButtonRadius"] = 4;
                 Resources["FluentCornerRadius"] = new CornerRadius(4);
             }
