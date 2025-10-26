@@ -1,0 +1,81 @@
+name: MSBuild
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+    tags:
+      - v[0-9]+*
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  SOLUTION_FILE_PATH: .
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Restore NuGet packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform="Any CPU" ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: binaries
+        path: |
+          MediaFlyout/bin/${{env.BUILD_CONFIGURATION}}/
+
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: [ build ]
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
+        id: artifacts_dl
+        with:
+          name: binaries
+          path: ./binaries-dl
+
+      - name: Build installation dist
+        run: |
+          mkdir distpkg
+
+          cp -a install-scripts/. distpkg/
+          cat > "distpkg/GitHub Repository.url" <<EOL
+          [InternetShortcut]
+          URL=https://github.com/krlvm/MediaFlyout
+          EOL
+
+          mkdir distpkg/dist
+          mv binaries-dl/* distpkg/dist
+
+          pushd distpkg
+          zip -r ../MediaFlyout-${{ github.ref_name }}.zip .
+          popd
+          
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          fail_on_unmatched_files: true
+          files: |
+            MediaFlyout-${{  github.ref_name }}.zip
