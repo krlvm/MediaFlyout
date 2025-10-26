@@ -86,6 +86,7 @@
     </Reference>
     <Reference Include="Windows">
       <HintPath>$(WindowsSdkDir)UnionMetadata\$(WindowsSdkVersion)Windows.winmd</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
