@@ -6,27 +6,18 @@ namespace MediaFlyout.Helpers
 {
     public sealed class WindowsTaskbar
     {
+        public static uint Dpi => User32.GetDpiForWindow(Handle);
+        public static IntPtr Handle => User32.FindWindow("Shell_TrayWnd", null);
+
         public struct State
         {
             public Position Side;
             public double Right;
             public double Bottom;
 
-            public bool IsHorizontal
-            {
-                get
-                {
-                    return Side == Position.Bottom || Side == Position.Top;
-                }
-            }
-            public bool IsAutoHideEnabled
-            {
-                get
-                {
-                    return IsHorizontal ? (SystemParameters.PrimaryScreenHeight == SystemParameters.WorkArea.Height) :
+            public bool IsHorizontal => Side == Position.Bottom || Side == Position.Top;
+            public bool IsAutoHideEnabled => IsHorizontal ? (SystemParameters.PrimaryScreenHeight == SystemParameters.WorkArea.Height) :
                         (SystemParameters.PrimaryScreenWidth == SystemParameters.WorkArea.Width);
-                }
-            }
         }
 
         public enum Position
@@ -82,8 +73,5 @@ namespace MediaFlyout.Helpers
                 };
             }
         }
-
-        public static uint Dpi => User32.GetDpiForWindow(Handle);
-        public static IntPtr Handle => User32.FindWindow("Shell_TrayWnd", null);
     }
 }

@@ -9,76 +9,31 @@ namespace MediaFlyout.Helpers
     {
         private const string REG_PERSONALIZATION_KEY = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize";
 
-        private const string SYSTEM_THEME_VALUE = "SystemUsesLightTheme";
-        private const string APPS_THEME_VALUE = "AppsUseLightTheme";
-        private const string ACCENT_SURFACE_VALUE = "ColorPrevalence";
-        private const string ACRYLIC_VALUE = "EnableTransparency";
+        public static event EventHandler OnThemeChanged;
 
-        public event EventHandler OnThemeChanged;
-
-        private static ThemeHelper _instance = null;
-        public static ThemeHelper Instance
+        private static bool s_isInitialized = false;
+        public static void Initialize()
         {
-            get
+            if (s_isInitialized)
             {
-                if (_instance == null)
-                {
-                    _instance = new ThemeHelper();
-                }
-                return _instance;
+                return;
             }
-        }
 
-        private ThemeHelper()
-        {
             AccentColors.Initialize();
             AccentColors.WatchAccentColors();
+
+            s_isInitialized = true;
         }
 
-        internal void HandleThemeChange(object sender, EventArgs e)
+        internal static void HandleThemeChange(object sender, EventArgs e)
         {
-            if (OnThemeChanged != null)
-            {
-                OnThemeChanged(this, EventArgs.Empty);
-            }
+            OnThemeChanged?.Invoke(null, null);
         }
 
-        private void Dispose()
-        {
-            OnThemeChanged = null;
-        }
+        public static ColorScheme SystemTheme => (!RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, "SystemUsesLightTheme") || Environment.OSVersion.IsLessThan(OSVersions.VER_19H1)) ? ColorScheme.Dark : ColorScheme.Light;
+        public static ColorScheme AppsTheme => RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, "AppsUseLightTheme") ? ColorScheme.Light : ColorScheme.Dark;
 
-        public static ColorScheme SystemTheme
-        {
-            get
-            {
-                if (Environment.OSVersion.IsLessThan(OSVersions.VER_19H1)) return ColorScheme.Dark;
-                return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, SYSTEM_THEME_VALUE) ? ColorScheme.Light : ColorScheme.Dark;
-            }
-        }
-
-        public static ColorScheme Apps
-        {
-            get
-            {
-                return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, APPS_THEME_VALUE) ? ColorScheme.Light : ColorScheme.Dark;
-            }
-        }
-
-        public static bool ShowAccentColorOnSurface
-        {
-            get
-            {
-                return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, ACCENT_SURFACE_VALUE);
-            }
-        }
-
-        public static bool AcrylicEnabled
-        {
-            get
-            {
-                return RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, ACRYLIC_VALUE);
-            }
-        }
+        public static bool ShowAccentColorOnSurface => RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, "ColorPrevalence");
+        public static bool AcrylicEnabled => RegistryUtil.IsValueEnabled(REG_PERSONALIZATION_KEY, "EnableTransparency");
     }
 }

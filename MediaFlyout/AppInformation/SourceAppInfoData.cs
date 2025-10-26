@@ -11,11 +11,8 @@ namespace MediaFlyout.AppInformation
     public class SourceAppInfoData
     {
         public string AppUserModelId { get; set; }
-
         public IntPtr MainWindowHandle { get; set; }
-
         public uint ProcessId { get; set; }
-
         public SourceAppInfoDataType DataType { get; set; }
     }
 }

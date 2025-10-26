@@ -8,10 +8,17 @@ using System.Threading.Tasks;
 
 namespace MediaFlyout.Helpers
 {
-    class AnimationHelper
+    sealed class AnimationHelper
     {
         private static double ANIMATION_TIME_ENTRACE = Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2) ? 0.25 : 0.5;
-        private const  double ANIMATION_TIME_EXIT = 0.1;
+        private const double ANIMATION_TIME_EXIT = 0.1;
+
+        struct FlyoutAnimationScheme
+        {
+            public DependencyProperty Property;
+            public double From;
+            public double To;
+        }
 
         private static FlyoutAnimationScheme CalculateFlyoutAnimationScheme(FlyoutWindow window, bool topmost = false)
         {
@@ -53,7 +60,7 @@ namespace MediaFlyout.Helpers
                     throw new InvalidOperationException();
             }
 
-            if (Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2))
+            if (Environment.OSVersion.IsWindows11())
             {
                 to -= 12;
                 window.Left = taskbar.Right - window.Width + window.BorderThickness.Right - 12;
@@ -94,7 +101,14 @@ namespace MediaFlyout.Helpers
 
             window.IsRaising = true;
             BringTaskbarToFront();
-            if (scheme.Property == Window.TopProperty) window.Top = 999999; else window.Left = 999999;
+            if (scheme.Property == Window.TopProperty)
+            {
+                window.Top = 999999;
+            }
+            else
+            {
+                window.Left = 999999;
+            }
             window.Visibility = Visibility.Visible;
             System.Threading.Thread.Sleep(1);
             window.Activate();
@@ -103,7 +117,7 @@ namespace MediaFlyout.Helpers
 
             if (!SystemParameters.MenuAnimation)
             {
-                if(scheme.Property == Window.TopProperty)
+                if (scheme.Property == Window.TopProperty)
                 {
                     window.Top = scheme.To;
                 }
@@ -157,7 +171,7 @@ namespace MediaFlyout.Helpers
 
         public static void HideFlyout(FlyoutWindow window)
         {
-            window.Tray.isClosing = true;
+            window.Tray.IsClosing = true;
             window.Topmost = false;
             var onCompleted = new EventHandler(async (s, e) =>
             {
@@ -165,7 +179,7 @@ namespace MediaFlyout.Helpers
                 window.Left = 999999;
                 await Task.Delay(System.Windows.Forms.SystemInformation.DoubleClickTime);
                 window.Visibility = Visibility.Hidden;
-                window.Tray.isClosing = false;
+                window.Tray.IsClosing = false;
             });
 
             if (!SystemParameters.MenuAnimation || Environment.OSVersion.IsLessThan(OSVersions.VER_11_21H2))
@@ -221,13 +235,5 @@ namespace MediaFlyout.Helpers
         {
             User32.SetForegroundWindow(WindowsTaskbar.Handle);
         }
-    }
-
-
-    struct FlyoutAnimationScheme
-    {
-        public DependencyProperty Property;
-        public double From;
-        public double To;
     }
 }

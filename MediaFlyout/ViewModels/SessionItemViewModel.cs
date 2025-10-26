@@ -4,38 +4,40 @@ using System.Windows.Media;
 
 namespace MediaFlyout.ViewModels
 {
-    class SessionItemViewModel : INotifyPropertyChanged
+    internal class SessionItemViewModel : ViewModelBase
     {
 
         #region General
 
-        private string _Title;
+        private string _title;
         public string Title
         {
-            get { return _Title; }
-            set { if (!value.Equals(_Title)) { _Title = value; OnPropertyChanged(); } }
+            get => _title;
+            set => SetProperty(ref _title, value);
         }
 
-        private string _Artist;
+        private string _artist;
         public string Artist
         {
-            get { return _Artist; }
-            set { if (!value.Equals(_Artist)) { _Artist = value; OnPropertyChanged(); } }
+            get => _artist;
+            set => SetProperty(ref _artist, value);
         }
 
-        private ImageSource _Thumbnail;
+        private ImageSource _thumbnail;
         public ImageSource Thumbnail
         {
-            get { return _Thumbnail; }
-            set {
-                if (value != _Thumbnail)
+            get => _thumbnail;
+            set
+            {
+                if (value != _thumbnail)
                 {
                     if (value != null)
                     {
-                        ThumbnailSize = DEFAULT_THUMBNAIL_SIZE;
-                        _Thumbnail = value;
+                        ThumbnailSize = 48;
+                        _thumbnail = value;
                         OnPropertyChanged();
-                    } else
+                    }
+                    else
                     {
                         SetAppIconAsThumbnail();
                     }
@@ -43,45 +45,39 @@ namespace MediaFlyout.ViewModels
             }
         }
 
-        private void SetAppIconAsThumbnail()
-        {
-            ThumbnailSize = 32;
-            _Thumbnail = AppIcon;
-            OnPropertyChanged("Thumbnail");
-        }
-
-        private const int DEFAULT_THUMBNAIL_SIZE = 48;
-        private int _ThumbnailSize;
+        private int _thumbnailSize;
         public int ThumbnailSize
         {
-            get { return _ThumbnailSize; }
-            set { if (value != _ThumbnailSize) { _ThumbnailSize = value; OnPropertyChanged(); } }
+            get => _thumbnailSize;
+            set => SetProperty(ref _thumbnailSize, value);
         }
 
         #endregion
 
         #region Source App
 
-        private string _AppName;
+        private string _appName;
         public string AppName
         {
-            get { return _AppName; }
-            set { if (!value.Equals(_AppName)) { _AppName = value; OnPropertyChanged(); } }
+            get => _appName;
+            set => SetProperty(ref _appName, value);
         }
 
-        private ImageSource _AppIcon;
+        private ImageSource _appIcon;
         public ImageSource AppIcon
         {
-            get { return _AppIcon; }
-            set { 
-                if (value != _AppIcon) {
-                    _AppIcon = value;
-                    OnPropertyChanged(); 
-                    if (_Thumbnail == null)
+            get => _appIcon;
+            set
+            {
+                if (value != _appIcon)
+                {
+                    _appIcon = value;
+                    OnPropertyChanged();
+                    if (Thumbnail == null)
                     {
                         SetAppIconAsThumbnail();
                     }
-                } 
+                }
             }
         }
 
@@ -89,40 +85,40 @@ namespace MediaFlyout.ViewModels
 
         #region Control Buttons
 
-        private bool _IsPreviousEnabled;
+        private bool _isPreviousEnabled;
         public bool IsPreviousEnabled
         {
-            get { return _IsPreviousEnabled; }
-            set { if (!value.Equals(_IsPreviousEnabled)) { _IsPreviousEnabled = value; OnPropertyChanged(); } }
+            get => _isPreviousEnabled;
+            set => SetProperty(ref _isPreviousEnabled, value);
         }
 
-        private bool _IsPlayPauseEnabled;
+        private bool _isPlayPauseEnabled;
         public bool IsPlayPauseEnabled
         {
-            get { return _IsPlayPauseEnabled; }
-            set { if (!value.Equals(_IsPlayPauseEnabled)) { _IsPlayPauseEnabled = value; OnPropertyChanged(); } }
+            get => _isPlayPauseEnabled;
+            set => SetProperty(ref _isPlayPauseEnabled, value);
         }
 
-        private bool _IsNextEnabled;
+        private bool _isNextEnabled;
         public bool IsNextEnabled
         {
-            get { return _IsNextEnabled; }
-            set { if (!value.Equals(_IsNextEnabled)) { _IsNextEnabled = value; OnPropertyChanged(); } }
+            get => _isNextEnabled;
+            set => SetProperty(ref _isNextEnabled, value);
         }
 
-        private string _ToggleButton;
+        private string _toggleButton;
         public string ToggleButton
         {
-            get { return _ToggleButton; }
-            set { if (!value.Equals(_ToggleButton)) { _ToggleButton = value; OnPropertyChanged(); } }
+            get => _toggleButton;
+            set => SetProperty(ref _toggleButton, value);
         }
 
         #endregion
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void SetAppIconAsThumbnail()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Thumbnail = AppIcon;
+            ThumbnailSize = 32;
         }
     }
 }

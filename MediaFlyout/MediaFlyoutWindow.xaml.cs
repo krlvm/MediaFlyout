@@ -7,20 +7,20 @@ using Microsoft.Win32;
 using MediaFlyout.Views;
 using MediaFlyout.Flyout;
 using MediaFlyout.Extensions;
+using System.Threading.Tasks;
+using MediaFlyout.Models;
 
 namespace MediaFlyout
 {
     public partial class MediaFlyoutWindow : FlyoutWindow
     {
-        private MediaFlyoutTray tray;
-        private GlobalSystemMediaTransportControlsSessionManager smtc;
+        private MediaFlyoutTray _mediaFlyoutTray;
+        private GlobalSystemMediaTransportControlsSessionManager _smtc;
 
-        private bool problemDetected = false;
-
-        public MediaFlyoutWindow()
+        public MediaFlyoutWindow() : base()
         {
-            tray = new MediaFlyoutTray(this);
-            _tray = tray;
+            _mediaFlyoutTray = new MediaFlyoutTray(this);
+            Tray = _mediaFlyoutTray;
 
             InitializeComponent();
 
@@ -49,12 +49,6 @@ namespace MediaFlyout
         {
             if (SessionsStackPanel.Children.Count == 0)
             {
-                if (problemDetected)
-                {
-                    App.RestartApp();
-                    return;
-                }
-                problemDetected = true;
                 ReloadFlyout();
             }
             base.RaiseFlyout();
@@ -79,27 +73,24 @@ namespace MediaFlyout
 
         #region Session Management
 
-        public void TogglePlayback()
+        public async Task TogglePlayback()
         {
-            bool? isPlaying = SMTC_IsPlaying();
-            if (isPlaying == null) return;
-
-            if ((bool)isPlaying)
+            switch (SMTC_GetStatus())
             {
-                foreach (var session in smtc.GetSessions())
-                {
-                    session.TryPauseAsync();
-                }
-            }
-            else
-            {
-                smtc.GetCurrentSession()?.TryPlayAsync();
+                case MediaPlaybackStatus.Idle: break;
+                case MediaPlaybackStatus.Playing:
+                    var tasks = _smtc.GetSessions().Select(session => session.TryPauseAsync().AsTask());
+                    await Task.WhenAll(tasks);
+                    break;
+                case MediaPlaybackStatus.Paused:
+                    await _smtc.GetCurrentSession()?.TryPlayAsync().AsTask();
+                    break;
             }
         }
 
         public void UpdateStatus()
         {
-            tray.SetStatus(SMTC_IsPlaying());
+            _mediaFlyoutTray.SetStatus(SMTC_GetStatus());
         }
 
         private void InvalidateSessions()
@@ -114,7 +105,7 @@ namespace MediaFlyout
         private void UpdateSessions()
         {
             InvalidateSessions();
-            foreach (var session in smtc.GetSessions())
+            foreach (var session in _smtc.GetSessions())
             {
                 SessionsStackPanel.Children.Add(new SessionItem(this, session));
             }
@@ -132,17 +123,17 @@ namespace MediaFlyout
 
         private void SMTC_Initialize()
         {
-            if (smtc != null)
+            if (_smtc != null)
             {
-                smtc.SessionsChanged -= SMTC_SessionsChanged;
+                _smtc.SessionsChanged -= SMTC_SessionsChanged;
             }
 
-            //smtc = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
-            var task = GlobalSystemMediaTransportControlsSessionManager.RequestAsync().AsTask();
-            task.Wait();
-            smtc = task.Result;
+            _smtc = GlobalSystemMediaTransportControlsSessionManager.RequestAsync()
+                .AsTask()
+                .GetAwaiter()
+                .GetResult();
 
-            smtc.SessionsChanged += SMTC_SessionsChanged;
+            _smtc.SessionsChanged += SMTC_SessionsChanged;
         }
 
         private void SMTC_SessionsChanged(GlobalSystemMediaTransportControlsSessionManager sender, SessionsChangedEventArgs args)
@@ -153,19 +144,16 @@ namespace MediaFlyout
             });
         }
 
-        private bool? SMTC_IsPlaying()
+        private MediaPlaybackStatus SMTC_GetStatus()
         {
-            if (smtc == null || !smtc.GetSessions().Any()) return null;
-
-            bool isPlaying = false;
-            foreach (var session in smtc.GetSessions())
+            if (_smtc == null || !_smtc.GetSessions().Any())
             {
-                if (session.GetPlaybackInfo().PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing)
-                {
-                    isPlaying = true;
-                }
+                return MediaPlaybackStatus.Idle;
             }
-            return isPlaying;
+
+            return _smtc.GetSessions()
+                .Any(session => session.GetPlaybackInfo().PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing)
+                    ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
         }
 
         #endregion

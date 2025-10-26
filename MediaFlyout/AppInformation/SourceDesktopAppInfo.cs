@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
@@ -23,82 +22,51 @@ namespace MediaFlyout.AppInformation
         public override void Activate()
         {
             if (sourceProcess == null)
+            {
                 return;
-
-#if FALSE
-            sourceProcess.Refresh();
-            IntPtr hWnd;
-            if (Data.MainWindowHandle != IntPtr.Zero && IsWindow(Data.MainWindowHandle))
-            {
-                hWnd = Data.MainWindowHandle;
             }
-            else
-            {
-                if (sourceProcess.MainWindowHandle == IntPtr.Zero)
-                {
-                    sourceProcess.Refresh();
-                }
-                if (sourceProcess.MainWindowHandle == IntPtr.Zero)
-                {
-                
-                    var handles = new List<IntPtr>();
 
-                    foreach (ProcessThread thread in Process.GetProcessById(processId).Threads)
-                    {
-                        EnumThreadWindows(thread.Id, (hWnd, lParam) => { handles.Add(hWnd); return true; }, IntPtr.Zero);
-                    }
-
-                    var handles = InteropHelper.EnumerateProcessWindowHandles(sourceProcess.Id);
-                    hWnd = handles.Any() ? handles.First() : IntPtr.Zero;
-                }
-                else
-                {
-                    hWnd = sourceProcess.MainWindowHandle;
-                }
-            }
-#else
             IntPtr hWnd = IsWindow(Data.MainWindowHandle)
                 ? Data.MainWindowHandle : sourceProcess.MainWindowHandle;
-#endif
 
             ActivateWindow(hWnd);
         }
 
         public override async void FetchInfosAsync()
         {
-            Bitmap bitmap = new Bitmap(16, 16);
-
             await Task.Run(() =>
             {
-                if (Data.DataType == SourceAppInfoDataType.FromAppUserModelId)
+                switch (Data.DataType)
                 {
-                    var processName = Data.AppUserModelId.Substring(0, Data.AppUserModelId.Length - 4);
-                    var processes = Process.GetProcessesByName(processName);
-
-                    if (processes?.Length > 0)
-                    {
-                        sourceProcess = processes[0];
-                    }
-                }
-                else if (Data.DataType == SourceAppInfoDataType.FromProcessId)
-                {
-                    sourceProcess = Process.GetProcessById((int)Data.ProcessId);
+                    case SourceAppInfoDataType.FromAppUserModelId:
+                        var processName = Data.AppUserModelId.Substring(0, Data.AppUserModelId.Length - 4);
+                        var processes = Process.GetProcessesByName(processName);
+                        if (processes?.Length > 0)
+                        {
+                            sourceProcess = processes[0];
+                        }
+                        break;
+                    case SourceAppInfoDataType.FromProcessId:
+                        sourceProcess = Process.GetProcessById((int)Data.ProcessId);
+                        break;
                 }
 
                 if (sourceProcess == null)
+                {
                     return;
+                }
 
                 DisplayName = sourceProcess.MainModule.FileVersionInfo.FileDescription;
 
                 var path = sourceProcess.MainModule.FileName;
                 var ie = new IconExtractor(path);
                 var icon = ie.GetIcon(0);
-                bitmap = icon.ToBitmap();
+                var bitmap = icon.ToBitmap();
                 icon.Dispose();
 
                 if (bitmap != null)
                 {
-                    MemoryStream memoryStream = new MemoryStream();
+                    var memoryStream = new MemoryStream();
                     bitmap.Save(memoryStream, ImageFormat.Png);
                     memoryStream.Seek(0, SeekOrigin.Begin);
 
@@ -120,18 +88,28 @@ namespace MediaFlyout.AppInformation
 
         #region Window activation things
 
+        private enum WindowSizeState
+        {
+            Normal,
+            Minimized,
+            Maximized,
+            Unknown,
+        }
+
         internal static void ActivateWindow(IntPtr hWnd)
         {
-            if (hWnd != IntPtr.Zero)
+            if (hWnd == IntPtr.Zero)
             {
-                if (GetWindowSizeState(hWnd) == WindowSizeState.Minimized)
-                {
-                    ShowWindowAsync(hWnd, ShowWindowCommands.Restore);
-                }
-
-                SetForegroundWindow(hWnd);
-                FlashWindow(hWnd, true);
+                return;
             }
+
+            if (GetWindowSizeState(hWnd) == WindowSizeState.Minimized)
+            {
+                ShowWindowAsync(hWnd, ShowWindowCommands.Restore);
+            }
+
+            SetForegroundWindow(hWnd);
+            FlashWindow(hWnd, true);
         }
 
         private static WindowSizeState GetWindowSizeState(IntPtr hWnd)
@@ -145,14 +123,6 @@ namespace MediaFlyout.AppInformation
                 case ShowWindowCommands.Maximize: return WindowSizeState.Maximized;
                 default: return WindowSizeState.Unknown;
             }
-        }
-
-        private enum WindowSizeState
-        {
-            Normal,
-            Minimized,
-            Maximized,
-            Unknown,
         }
 
         #endregion

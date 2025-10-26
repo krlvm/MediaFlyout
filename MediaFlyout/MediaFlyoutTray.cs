@@ -1,11 +1,8 @@
-﻿#define USE_FONT_FOR_ICON
-
-using System;
-using System.Drawing;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Forms;
-using MediaFlyout.Extensions;
+using System.Windows.Media;
 using MediaFlyout.Helpers;
+using MediaFlyout.Models;
 using MediaFlyout.Properties;
 
 namespace MediaFlyout
@@ -14,50 +11,57 @@ namespace MediaFlyout
     {
         private readonly MediaFlyoutWindow flyout;
 
-        private Icon[] icons = new Icon[2];
-        private bool? currentPlaybackStatus;
+        private (System.Drawing.Icon playing, System.Drawing.Icon paused) icons;
+        private MediaPlaybackStatus currentPlaybackStatus;
 
         public MediaFlyoutTray(MediaFlyoutWindow flyout)
         {
             this.flyout = flyout;
-            SetStatus(null);
+            SetStatus(MediaPlaybackStatus.Idle);
         }
 
-        public void SetStatus(bool? isPlaying, bool force = false)
+        public void SetStatus(MediaPlaybackStatus status, bool force = false)
         {
-            if (currentPlaybackStatus == isPlaying && !force) return;
-
-            currentPlaybackStatus = isPlaying;
-
-            if (isPlaying == null)
+            if (currentPlaybackStatus == status && !force)
             {
-                notifyIcon.Visible = false;
                 return;
             }
 
-            try
+            currentPlaybackStatus = status;
+
+            switch (status)
             {
-                notifyIcon.Icon = icons[(bool)isPlaying ? 0 : 1];
+                case MediaPlaybackStatus.Idle:
+                    notifyIcon.Visible = false;
+                    return; //
+
+                case MediaPlaybackStatus.Playing:
+                    notifyIcon.Icon = icons.playing;
+                    notifyIcon.Text = Resources.Tray_Pause;
+                    break;
+                case MediaPlaybackStatus.Paused:
+                    notifyIcon.Icon = icons.paused;
+                    notifyIcon.Text = Resources.Tray_Play;
+                    break;
             }
-            catch (ObjectDisposedException)
-            {
-                SetIconColor(currentColor, true);
-            }
+
             notifyIcon.Visible = true;
-            notifyIcon.Text = (bool)isPlaying ? Resources.Tray_Pause : Resources.Tray_Play;
         }
 
         #region Click Handlers
 
-        protected override void OnClick(object sender, MouseEventArgs args)
+        protected override async void OnClick(object sender, MouseEventArgs args)
         {
             if (args.Button == MouseButtons.Middle)
             {
-                flyout.TogglePlayback();
+                await flyout.TogglePlayback();
                 return;
             }
 
-            if (isClosing) return;
+            if (IsClosing)
+            {
+                return;
+            }
 
             if (flyout.Visibility == Visibility.Visible)
             {
@@ -72,28 +76,23 @@ namespace MediaFlyout
 
             flyout.Topmost = false;
             flyout.RaiseFlyout();
-            flyout.Theme_Apply();
         }
 
-        protected override void OnDoubleClick(object sender, MouseEventArgs args)
+        protected override async void OnDoubleClick(object sender, MouseEventArgs args)
         {
-            flyout.TogglePlayback();
+            await flyout.TogglePlayback();
         }
 
         #endregion
 
         protected override void ReloadIcon(Color color)
         {
-            foreach (var icon in icons)
-            {
-                icon?.Dispose();
-            }
-
-            var suffix = Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2) ? "_11" : "";
+            icons.playing?.Dispose();
+            icons.paused?.Dispose();
 
             var dpi = WindowsTaskbar.Dpi;
-            icons[0] = TrayIconUtil.LoadIcon((string)App.Current.Resources["TrayIconPause" + suffix], dpi, color);
-            icons[1] = TrayIconUtil.LoadIcon((string)App.Current.Resources["TrayIconPlay"  + suffix], dpi, color);
+            icons.playing = GlyphIconMaker.MakeIcon(Constants.GlyphTypeface, Constants.GLYPH_PAUSE, color, dpi);
+            icons.paused = GlyphIconMaker.MakeIcon(Constants.GlyphTypeface, Constants.GLYPH_PLAY, color, dpi);
 
             SetStatus(currentPlaybackStatus, true);
         }

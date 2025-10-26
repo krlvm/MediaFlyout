@@ -1,9 +1,9 @@
-﻿using MediaFlyout.Interop;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using MediaFlyout.Interop;
 using static MediaFlyout.Interop.User32;
 
 namespace MediaFlyout.Extensions
@@ -64,8 +64,8 @@ namespace MediaFlyout.Extensions
 
         public static void ApplyAccentPolicy(this Window window, double opacity, Color tint, AccentFlags flags)
         {
-            ApplyAccentPolicy(window, 
-                opacity == 1 ? AccentState.ACCENT_ENABLE_GRADIENT : AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND, 
+            ApplyAccentPolicy(window,
+                opacity == 1 ? AccentState.ACCENT_ENABLE_GRADIENT : AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND,
                 opacity, tint, flags);
         }
 

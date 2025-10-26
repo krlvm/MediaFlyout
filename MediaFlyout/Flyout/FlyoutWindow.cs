@@ -1,30 +1,20 @@
-﻿using MediaFlyout.Extensions;
-using MediaFlyout.Helpers;
-using MediaFlyout.Interop;
-using MediaFlyout.Styles;
-using System;
+﻿using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using MediaFlyout.Extensions;
+using MediaFlyout.Helpers;
+using MediaFlyout.Interop;
+using MediaFlyout.Styles;
 
 namespace MediaFlyout.Flyout
 {
     public abstract class FlyoutWindow : Window
     {
-        protected FlyoutTray _tray;
-        protected bool isRaising = false;
-
-        public FlyoutTray Tray
-        {
-            get { return _tray; }
-        }
-        public bool IsRaising
-        {
-            get { return isRaising; }
-            set { isRaising = value; }
-        }
+        public FlyoutTray Tray { get; protected set; }
+        public bool IsRaising { get; set; }
 
         public FlyoutWindow()
         {
@@ -32,10 +22,13 @@ namespace MediaFlyout.Flyout
             AllowsTransparency = true;
             SizeToContent = SizeToContent.Height;
             ResizeMode = ResizeMode.NoResize;
+            //
             UseLayoutRounding = true;
             SnapsToDevicePixels = true;
+            //
             Background = new SolidColorBrush(Color.FromArgb(1, 128, 128, 128));
             BorderThickness = new Thickness(0);
+            //
             ShowInTaskbar = false;
             Visibility = Visibility.Hidden;
 
@@ -46,17 +39,22 @@ namespace MediaFlyout.Flyout
 
             if (Environment.OSVersion.IsWindows11())
             {
-                FontFamily = new FontFamily("Segoe UI Variable Text");
-                Resources["IconFont"] = new FontFamily("Segoe Fluent Icons");
                 Resources["FluentButtonRadius"] = 4;
                 Resources["FluentCornerRadius"] = new CornerRadius(4);
+
+                FontFamily = new FontFamily("Segoe UI Variable Text");
+
+                Constants.GlyphTypeface = new Typeface("Segoe Fluent Icons");
+                Resources["IconFont"] = Constants.GlyphTypeface.FontFamily;
             }
             else
             {
-                Resources["IconFont"] = new FontFamily("Segoe MDL2 Assets");
+                Constants.GlyphTypeface = new Typeface("Segoe MDL2 Assets");
+                Resources["IconFont"] = Constants.GlyphTypeface.FontFamily;
             }
 
-            ThemeHelper.Instance.OnThemeChanged += Theme_ThemeChanged;
+            ThemeHelper.Initialize();
+            ThemeHelper.OnThemeChanged += Theme_ThemeChanged;
             Theme_Update();
 
             Left = 999999;
@@ -67,12 +65,16 @@ namespace MediaFlyout.Flyout
         public virtual void RaiseFlyout()
         {
             Theme_Update();
+            Theme_Apply();
             AnimationHelper.ShowFlyout(this, true);
         }
 
         public virtual void DismissFlyout()
         {
-            if (Visibility == Visibility.Hidden) return;
+            if (Visibility == Visibility.Hidden)
+            {
+                return;
+            }
             AnimationHelper.HideFlyout(this);
         }
 
@@ -118,44 +120,35 @@ namespace MediaFlyout.Flyout
 
         #region Theme Management
 
-        private static bool IS_W11 = Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2);
+        private static bool IS_W11 = Environment.OSVersion.IsWindows11();
 
         private readonly Color COLOR_LIGHT_TINT = IS_W11 ? Color.FromRgb(243, 243, 243) : Color.FromRgb(228, 228, 228);
         private readonly Color COLOR_LIGHT_FALLBACK = IS_W11 ? Color.FromRgb(238, 238, 238) : Color.FromRgb(228, 228, 228);
         private readonly Color COLOR_DARK_TINT = IS_W11 ? Color.FromRgb(32, 32, 32) : Color.FromRgb(36, 36, 36);
         private readonly Color COLOR_DARK_FALLBACK = IS_W11 ? Color.FromRgb(28, 28, 28) : Color.FromRgb(31, 31, 31);
 
-        private bool _needReset = false;
-
-        private ColorScheme? _theme = null;
-        private bool? _showAccentColorOnSurface = null;
-        private bool? _useAcrylic = null;
+        private ColorScheme? _theme;
+        private bool _showAccentColorOnSurface;
+        private bool _useAcrylic;
         private Color _accentTintColor;
         private Color _tintColor;
-        private double __tintOpacity;
-        private double _tintOpacity
-        {
-            get { return __tintOpacity; }
-            set
-            {
-                if (__tintOpacity != value && (__tintOpacity == 1 || value == 1))
-                {
-                    _needReset = true;
-                }
-                __tintOpacity = value;
-            }
-        }
+        private double _tintOpacity;
 
+        private bool _accentPolicyResetRequired = false;
         public void Theme_Apply()
         {
-            if (_needReset)
+            if (_accentPolicyResetRequired)
             {
                 this.ResetAccentPolicy();
-                _needReset = false;
+                _accentPolicyResetRequired = false;
             }
 
             User32.AccentFlags flags = User32.AccentFlags.DrawAllBorders;
-            if (!Environment.OSVersion.IsWindows11())
+            if (Environment.OSVersion.IsWindows11())
+            {
+                flags |= User32.AccentFlags.Win11Luminosity;
+            }
+            else
             {
                 switch (WindowsTaskbar.Current.Side)
                 {
@@ -174,7 +167,7 @@ namespace MediaFlyout.Flyout
                 }
             }
 
-            this.ApplyAccentPolicy(_tintOpacity, _tintColor, flags | User32.AccentFlags.Win11Luminosity);
+            this.ApplyAccentPolicy(_tintOpacity, _tintColor, flags);
         }
 
         private void Theme_Update()
@@ -182,8 +175,7 @@ namespace MediaFlyout.Flyout
             var theme = ThemeHelper.SystemTheme;
             var useAcrylic = ThemeHelper.AcrylicEnabled;
             var showAccentColorOnSurface = ThemeHelper.ShowAccentColorOnSurface;
-            var accentTintColor = Environment.OSVersion.IsAtLeast(OSVersions.VER_11_21H2) ?
-                AccentColors.ImmersiveSystemAccentDark2 : AccentColors.ImmersiveSystemAccentDark1;
+            var accentTintColor = IS_W11 ? AccentColors.ImmersiveSystemAccentDark2 : AccentColors.ImmersiveSystemAccentDark1;
 
             if (theme == _theme && useAcrylic == _useAcrylic && showAccentColorOnSurface == _showAccentColorOnSurface)
             {
@@ -193,15 +185,17 @@ namespace MediaFlyout.Flyout
                 }
             }
 
-            _theme = theme;
-            _useAcrylic = useAcrylic;
-            _showAccentColorOnSurface = showAccentColorOnSurface;
+            //
+            Tray?.SetIconColor(theme.Inverse().ToColor());
+            //
 
             ResourceDictionaryEx.Theme = theme;
+            Resources["FluentRevealEnabled"] = useAcrylic;
+            Resources["FluentRevealEffectsVisibility"] = useAcrylic ? Visibility.Visible : Visibility.Hidden;
 
             double tintOpacity;
             Color tintColor, fallbackColor;
-
+            //
             if (theme == ColorScheme.Light)
             {
                 fallbackColor = COLOR_LIGHT_FALLBACK;
@@ -224,25 +218,30 @@ namespace MediaFlyout.Flyout
                     tintOpacity = IS_W11 ? 0.5 : 0.85;
                 }
             }
-            _tray?.SetIconColor(theme.Inverse().ToTrayColor());
 
-            _tintOpacity = useAcrylic ? tintOpacity : 1;
-            _tintColor = useAcrylic ? tintColor : fallbackColor;
-            Resources["FluentRevealEnabled"] = useAcrylic;
-            Resources["FluentRevealEffectsVisibility"] = useAcrylic ? Visibility.Visible : Visibility.Hidden;
-
-            if (Visibility == Visibility.Visible)
+            if (tintOpacity != _tintOpacity)  // also implies (_useAcrylic != useAcrylic), see below
             {
-                Theme_Apply();
+                _accentPolicyResetRequired = true;
             }
+
+            _theme = theme;
+            _useAcrylic = useAcrylic;
+            _showAccentColorOnSurface = showAccentColorOnSurface;
+            _tintOpacity = useAcrylic ? tintOpacity : 1;  // <-- see ApplyAccentPolicy
+            _tintColor = useAcrylic ? tintColor : fallbackColor;
         }
 
         private void Theme_ThemeChanged(object sender, EventArgs args)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Send, (ThreadStart)delegate ()
+            Dispatcher.BeginInvoke(DispatcherPriority.Send, (ThreadStart)(() =>
             {
                 Theme_Update();
-            });
+
+                if (Visibility == Visibility.Visible)
+                {
+                    Theme_Apply();
+                }
+            }));
         }
 
         protected virtual void Theme_ThemeUpdated() { }

@@ -29,18 +29,19 @@ namespace MediaFlyout.AppInformation
         {
             try
             {
-                if (Data.DataType == SourceAppInfoDataType.FromAppUserModelId)
+                switch (Data.DataType)
                 {
-                    _ = sourceApp?.LaunchAsync();
-                }
-                else if (Data.DataType == SourceAppInfoDataType.FromProcessId)
-                {
-                    using (var sourceProcess = Process.GetProcessById((int)Data.ProcessId))
-                    {
-                        IntPtr hWnd = User32.IsWindow(Data.MainWindowHandle)
-                            ? Data.MainWindowHandle : sourceProcess?.MainWindowHandle ?? IntPtr.Zero;
-                        SourceDesktopAppInfo.ActivateWindow(hWnd);
-                    }
+                    case SourceAppInfoDataType.FromAppUserModelId:
+                        _ = sourceApp?.LaunchAsync();
+                        break;
+                    case SourceAppInfoDataType.FromProcessId:
+                        using (var sourceProcess = Process.GetProcessById((int)Data.ProcessId))
+                        {
+                            IntPtr hWnd = User32.IsWindow(Data.MainWindowHandle)
+                                ? Data.MainWindowHandle : sourceProcess?.MainWindowHandle ?? IntPtr.Zero;
+                            SourceDesktopAppInfo.ActivateWindow(hWnd);
+                        }
+                        break;
                 }
             }
             catch { }
@@ -51,8 +52,7 @@ namespace MediaFlyout.AppInformation
             string appUserModelId = Data.AppUserModelId;
             string path = string.Empty;
 
-            if (string.IsNullOrEmpty(Data.AppUserModelId)
-                || string.IsNullOrWhiteSpace(Data.AppUserModelId))
+            if (string.IsNullOrEmpty(Data.AppUserModelId) || string.IsNullOrWhiteSpace(Data.AppUserModelId))
             {
                 await Task.Run(() =>
                 {
@@ -87,7 +87,9 @@ namespace MediaFlyout.AppInformation
             sourceApp = await GetAppListEntry();
 
             if (sourceApp == null)
+            {
                 return;
+            }
 
             DisplayName = sourceApp.DisplayInfo.DisplayName;
 
@@ -98,7 +100,7 @@ namespace MediaFlyout.AppInformation
 
                 if (File.Exists(logoPath))
                 {
-                    MemoryStream memoryStream = new MemoryStream();
+                    var memoryStream = new MemoryStream();
                     byte[] fileBytes = File.ReadAllBytes(logoPath);
                     memoryStream.Write(fileBytes, 0, fileBytes.Length);
                     memoryStream.Seek(0, SeekOrigin.Begin);
@@ -189,7 +191,9 @@ namespace MediaFlyout.AppInformation
                 }
             }
             if (files.Count == 0)
+            {
                 return null;
+            }
 
             return files.ContainsKey(32) ? files[32] : files.First().Value;
         }

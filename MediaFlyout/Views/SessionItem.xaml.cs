@@ -19,9 +19,6 @@ namespace MediaFlyout.Views
         private SessionItemViewModel model = new SessionItemViewModel();
         private SourceAppInfo sourceInfo;
 
-        private static readonly string GLYPH_PLAY  = Environment.OSVersion.IsWindows11() ? "\uF5B0" : "\uE768";
-        private static readonly string GLYPH_PAUSE = Environment.OSVersion.IsWindows11() ? "\uF8AE" : "\uE769";
-
         public SessionItem(MediaFlyoutWindow flyout, GlobalSystemMediaTransportControlsSession session)
         {
             InitializeComponent();
@@ -61,7 +58,7 @@ namespace MediaFlyout.Views
         {
             if (session == null) return;
             var playback = session.GetPlaybackInfo();
-            model.ToggleButton = IsPlaying(playback) ? GLYPH_PAUSE : GLYPH_PLAY;
+            model.ToggleButton = IsPlaying(playback) ? Constants.GLYPH_PAUSE : Constants.GLYPH_PLAY;
 
             if (playback == null) return;
             model.IsPreviousEnabled = playback.Controls.IsPreviousEnabled;

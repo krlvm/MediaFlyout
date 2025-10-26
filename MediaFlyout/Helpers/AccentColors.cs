@@ -78,20 +78,19 @@ namespace MediaFlyout.Helpers
             if (window != null)
             {
                 WatchAccentColors(window);
+                return;
             }
-            else
+
+            EventHandler handler = null;
+            handler = (e, args) =>
             {
-                EventHandler handler = null;
-                handler = (e, args) =>
+                if (Application.Current.MainWindow != null)
                 {
-                    if (Application.Current.MainWindow != null)
-                    {
-                        WatchAccentColors(Application.Current.MainWindow);
-                    }
-                    Application.Current.Activated -= handler;
-                };
-                Application.Current.Activated += handler;
-            }
+                    WatchAccentColors(Application.Current.MainWindow);
+                }
+                Application.Current.Activated -= handler;
+            };
+            Application.Current.Activated += handler;
         }
 
         static void WatchAccentColors(Window window)
@@ -100,30 +99,32 @@ namespace MediaFlyout.Helpers
             {
                 var source = HwndSource.FromHwnd(window.GetHandle());
                 source.AddHook(WndProc);
+                return;
             }
-            else
+
+            window.Loaded += (_, __) =>
             {
-                window.Loaded += (_, __) =>
-                {
-                    WatchAccentColors(window);
-                };
-            }
+                WatchAccentColors(window);
+            };
         }
 
         static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (msg == User32.WM_DWMCOLORIZATIONCOLORCHANGED)
+            switch (msg)
             {
-                Initialize();
-                ThemeHelper.Instance.HandleThemeChange(null, null);
-            }
-            else if (msg == User32.WM_SETTINGCHANGE)
-            {
-                var systemParmeter = Marshal.PtrToStringAuto(lParam);
-                if (systemParmeter == "ImmersiveColorSet")
-                {
-                    ThemeHelper.Instance.HandleThemeChange(null, null);
-                }
+                case User32.WM_DWMCOLORIZATIONCOLORCHANGED:
+                    Initialize();
+                    ThemeHelper.HandleThemeChange(null, null);
+                    break;
+                case User32.WM_SETTINGCHANGE:
+                    var systemParmeter = Marshal.PtrToStringAuto(lParam);
+                    if (systemParmeter == "ImmersiveColorSet")
+                    {
+                        ThemeHelper.HandleThemeChange(null, null);
+                    }
+                    break;
+                default:
+                    break;
             }
             return IntPtr.Zero;
         }

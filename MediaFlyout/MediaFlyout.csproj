@@ -93,6 +93,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Extensions\IconExtensions.cs" />
     <Compile Include="FluentWPF\Animations\BrushAnimation.cs" />
     <Compile Include="FluentWPF\Converters\RectConverter.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
@@ -107,13 +108,15 @@
     <Compile Include="AppInformation\SourceAppInfoData.cs" />
     <Compile Include="AppInformation\SourceDesktopAppInfo.cs" />
     <Compile Include="AppInformation\SourceModernAppInfo.cs" />
+    <Compile Include="Helpers\GlyphIconMaker.cs" />
+    <Compile Include="MediaFlyoutConstants.cs" />
+    <Compile Include="Models\MediaPlaybackStatus.cs" />
     <Compile Include="Helpers\ThemeHelper.cs" />
     <Compile Include="Interop\UxTheme.cs" />
     <Compile Include="Styles\ColorScheme.cs" />
     <Compile Include="Styles\ResourceDictionaryEx.cs" />
     <Compile Include="Utilities\RegistryUtil.cs" />
     <Compile Include="Utilities\TrayClickListener.cs" />
-    <Compile Include="Utilities\TrayIconUtil.cs" />
     <Compile Include="Helpers\WindowsTaskbar.cs" />
     <Compile Include="Interop\DwmApi.cs" />
     <Compile Include="Interop\Kernel32.cs" />
@@ -130,6 +133,7 @@
     </Compile>
     <Compile Include="Utilities\ImageUtil.cs" />
     <Compile Include="ViewModels\SessionItemViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\SessionItem.xaml.cs">
       <DependentUpon>SessionItem.xaml</DependentUpon>
     </Compile>
@@ -214,14 +218,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icon_Pause.ico" />
-    <Resource Include="Resources\Icon_Play.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icon_Pause_11.ico" />
-    <Resource Include="Resources\Icon_Play_11.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

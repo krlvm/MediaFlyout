@@ -17,7 +17,7 @@ namespace MediaFlyout.Styles
         {
             return scheme == ColorScheme.Light ? Colors.White : Colors.Black;
         }
-        public static System.Drawing.Color ToTrayColor(this ColorScheme scheme)
+        public static System.Drawing.Color ToDrawingColor(this ColorScheme scheme)
         {
             return scheme == ColorScheme.Light ? System.Drawing.Color.White : System.Drawing.Color.Black;
         }
