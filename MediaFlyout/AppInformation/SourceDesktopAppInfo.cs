@@ -56,9 +56,20 @@ namespace MediaFlyout.AppInformation
                     return;
                 }
 
-                DisplayName = sourceProcess.MainModule.FileVersionInfo.FileDescription;
+                ProcessModule mainModule;
+                try
+                {
+                    mainModule = sourceProcess.MainModule;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    return;
+                }
 
-                var path = sourceProcess.MainModule.FileName;
+                DisplayName = mainModule.FileVersionInfo.FileDescription;
+
+                var path = mainModule.FileName;
                 var ie = new IconExtractor(path);
                 var icon = ie.GetIcon(0);
                 var bitmap = icon.ToBitmap();
