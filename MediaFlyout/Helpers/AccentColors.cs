@@ -123,6 +123,10 @@ namespace MediaFlyout.Helpers
                         ThemeHelper.HandleThemeChange(null, null);
                     }
                     break;
+                case User32.WM_DPICHANGED:
+                    // TODO: it should not be handled as part of theme watching
+                    ThemeHelper.HandleThemeChange(null, null);
+                    break;
                 default:
                     break;
             }

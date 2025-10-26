@@ -30,31 +30,31 @@ namespace MediaFlyout.Helpers
             if (taskbar.IsHorizontal)
             {
                 property = Window.TopProperty;
-                window.Left = taskbar.Right - window.Width + window.BorderThickness.Right;
+                window.Left = taskbar.ContainingScreen.Bounds.Right - window.Width + window.BorderThickness.Right;
             }
             else
             {
                 property = Window.LeftProperty;
-                window.Top = taskbar.Bottom - window.Height + window.BorderThickness.Bottom;
+                window.Top = taskbar.ContainingScreen.Bounds.Bottom - window.Height + window.BorderThickness.Bottom;
             }
 
             switch (taskbar.Side)
             {
                 case WindowsTaskbar.Position.Bottom:
-                    from = taskbar.Bottom;
+                    from = taskbar.ContainingScreen.Bounds.Bottom;
                     to = taskbar.Bottom - window.Height + window.BorderThickness.Bottom;
                     break;
                 case WindowsTaskbar.Position.Top:
-                    from = 0;
+                    from = taskbar.ContainingScreen.Bounds.Top;
                     to = taskbar.Bottom - window.BorderThickness.Top;
                     break;
                 case WindowsTaskbar.Position.Left:
-                    from = 0;
-                    to = taskbar.Right - window.BorderThickness.Left;
+                    from = taskbar.ContainingScreen.Bounds.Left;
+                    to = taskbar.ContainingScreen.WorkingArea.Left + window.BorderThickness.Left;
                     break;
                 case WindowsTaskbar.Position.Right:
-                    from = taskbar.Right;
-                    to = taskbar.Right - window.Width + window.BorderThickness.Right;
+                    from = taskbar.ContainingScreen.WorkingArea.Right;
+                    to = from - window.Width + window.BorderThickness.Right;
                     break;
                 default:
                     throw new InvalidOperationException();
@@ -221,8 +221,10 @@ namespace MediaFlyout.Helpers
             Storyboard.SetTarget(exitAnimation, window);
             Storyboard.SetTargetProperty(exitAnimation, new PropertyPath(scheme.Property));
 
-            var sb = new Storyboard();
-            sb.FillBehavior = FillBehavior.Stop;
+            var sb = new Storyboard
+            {
+                FillBehavior = FillBehavior.Stop
+            };
             sb.Children.Add(fadeAnimation);
             sb.Children.Add(exitAnimation);
             sb.Completed += onCompleted;

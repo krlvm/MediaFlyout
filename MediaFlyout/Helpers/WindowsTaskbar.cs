@@ -1,24 +1,14 @@
 ﻿using MediaFlyout.Interop;
 using System;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace MediaFlyout.Helpers
 {
     public sealed class WindowsTaskbar
     {
-        public static uint Dpi => User32.GetDpiForWindow(Handle);
         public static IntPtr Handle => User32.FindWindow("Shell_TrayWnd", null);
-
-        public struct State
-        {
-            public Position Side;
-            public double Right;
-            public double Bottom;
-
-            public bool IsHorizontal => Side == Position.Bottom || Side == Position.Top;
-            public bool IsAutoHideEnabled => IsHorizontal ? (SystemParameters.PrimaryScreenHeight == SystemParameters.WorkArea.Height) :
-                        (SystemParameters.PrimaryScreenWidth == SystemParameters.WorkArea.Width);
-        }
+        public static uint Dpi => User32.GetDpiForWindow(Handle);
 
         public enum Position
         {
@@ -28,15 +18,29 @@ namespace MediaFlyout.Helpers
             Bottom
         }
 
+        public struct State
+        {
+            public Screen ContainingScreen;
+            public Position Side;
+            public double Right;
+            public double Bottom;
+
+            public bool IsHorizontal => Side == Position.Bottom || Side == Position.Top;
+            public bool IsAutoHideEnabled => IsHorizontal ? (SystemParameters.PrimaryScreenHeight == SystemParameters.WorkArea.Height) :
+                        (SystemParameters.PrimaryScreenWidth == SystemParameters.WorkArea.Width);
+        }
+
         public static State Current
         {
             get
             {
+                var containingScreen = Screen.FromHandle(Handle);
+
                 Position side;
                 double right, bottom;
 
-                var wk = SystemParameters.WorkArea;
-                if (wk.Width == SystemParameters.PrimaryScreenWidth)
+                var wk = containingScreen.WorkingArea;
+                if (wk.Width == containingScreen.Bounds.Width)
                 {
                     right = wk.Right;
                     if (wk.Top > 0)
@@ -67,6 +71,7 @@ namespace MediaFlyout.Helpers
 
                 return new State
                 {
+                    ContainingScreen = containingScreen,
                     Side = side,
                     Right = right,
                     Bottom = bottom

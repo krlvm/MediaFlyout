@@ -236,6 +236,7 @@ namespace MediaFlyout.Interop
         public const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
         public const int WM_WININICHANGE = 0x001A;
         public const int WM_SETTINGCHANGE = WM_WININICHANGE;
+        public const int WM_DPICHANGED = 0x02E0;
 
         [DllImport("user32.dll")]
         public static extern bool IsImmersiveProcess(IntPtr hProcess);
