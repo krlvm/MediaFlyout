@@ -1,14 +1,12 @@
 ﻿using MediaFlyout.AppInformation;
 using MediaFlyout.Utilities;
 using MediaFlyout.ViewModels;
-using MediaFlyout.Extensions;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Windows.Media.Control;
-using static System.WindowsRuntimeSystemExtensions;
 
 namespace MediaFlyout.Views
 {
@@ -49,18 +47,27 @@ namespace MediaFlyout.Views
 
         private void UpdateInfo()
         {
-            if (session == null) return;
+            if (session == null)
+            {
+                return;
+            }
             UpdateControls();
             UpdateDetails();
         }
 
         private void UpdateControls()
         {
-            if (session == null) return;
+            if (session == null)
+            {
+                return;
+            }
             var playback = session.GetPlaybackInfo();
             model.ToggleButton = IsPlaying(playback) ? Constants.GLYPH_PAUSE : Constants.GLYPH_PLAY;
 
-            if (playback == null) return;
+            if (playback == null)
+            {
+                return;
+            }
             model.IsPreviousEnabled = playback.Controls.IsPreviousEnabled;
             model.IsPlayPauseEnabled = playback.Controls.IsPauseEnabled || playback.Controls.IsPlayEnabled;
             model.IsNextEnabled = playback.Controls.IsNextEnabled;
@@ -68,16 +75,24 @@ namespace MediaFlyout.Views
 
         private async void UpdateDetails()
         {
-            if (session == null) return;
+            if (session == null)
+            {
+                return;
+            }
+
             GlobalSystemMediaTransportControlsSessionMediaProperties properties;
             try
             {
                 properties = await session.TryGetMediaPropertiesAsync();
-            } catch (FileNotFoundException)
+            }
+            catch (FileNotFoundException)
             {
                 return;
             }
-            if (properties == null) return;
+            if (properties == null)
+            {
+                return;
+            }
             model.Title = properties.Title;
             model.Artist = properties.Artist;
 
@@ -110,7 +125,7 @@ namespace MediaFlyout.Views
 
         private bool IsPlaying(GlobalSystemMediaTransportControlsSessionPlaybackInfo playback)
         {
-            return playback != null && 
+            return playback != null &&
                 playback.PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing;
         }
 
@@ -149,8 +164,14 @@ namespace MediaFlyout.Views
 
         private void SessionView_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Enter || e.Handled) return;
-            if (e.OriginalSource != null && e.OriginalSource is Button) return;
+            if (e.Key != Key.Enter || e.Handled)
+            {
+                return;
+            }
+            if (e.OriginalSource != null && e.OriginalSource is Button)
+            {
+                return;
+            }
             sourceInfo?.Activate();
         }
 
@@ -185,7 +206,11 @@ namespace MediaFlyout.Views
 
         private void SourceAppInfo_InfoFetched(object sender, EventArgs e)
         {
-            if (sourceInfo == null) return;
+            if (sourceInfo == null)
+            {
+                return;
+            }
+
             sourceInfo.InfoFetched -= SourceAppInfo_InfoFetched;
 
             model.AppName = sourceInfo.DisplayName;
