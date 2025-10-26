@@ -12,7 +12,7 @@ namespace MediaFlyout
         protected readonly NotifyIcon notifyIcon;
 
         public bool IsClosing { get; set; }
-        protected Color currentColor;
+        protected Color? currentColor;
 
         public FlyoutTray()
         {
@@ -24,8 +24,6 @@ namespace MediaFlyout
             var listener = new TrayClickListener(notifyIcon);
             listener.Click += OnClick;
             listener.DoubleClick += OnDoubleClick;
-
-            SetIconColor(ThemeHelper.SystemTheme.Inverse().ToColor(), true);
         }
 
         public void Dispose()

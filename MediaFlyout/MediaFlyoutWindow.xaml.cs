@@ -21,6 +21,7 @@ namespace MediaFlyout
         {
             _mediaFlyoutTray = new MediaFlyoutTray(this);
             Tray = _mediaFlyoutTray;
+            Theme_TrayApply();
 
             InitializeComponent();
 

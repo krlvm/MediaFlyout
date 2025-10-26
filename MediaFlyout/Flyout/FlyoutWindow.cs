@@ -170,6 +170,11 @@ namespace MediaFlyout.Flyout
             this.ApplyAccentPolicy(_tintOpacity, _tintColor, flags);
         }
 
+        protected void Theme_TrayApply()
+        {
+            Tray?.SetIconColor((_theme ?? ColorScheme.Dark).Inverse().ToColor());
+        }
+
         private void Theme_Update()
         {
             var theme = ThemeHelper.SystemTheme;
@@ -184,10 +189,6 @@ namespace MediaFlyout.Flyout
                     return;
                 }
             }
-
-            //
-            Tray?.SetIconColor(theme.Inverse().ToColor());
-            //
 
             ResourceDictionaryEx.Theme = theme;
             Resources["FluentRevealEnabled"] = useAcrylic;
@@ -229,6 +230,10 @@ namespace MediaFlyout.Flyout
             _showAccentColorOnSurface = showAccentColorOnSurface;
             _tintOpacity = useAcrylic ? tintOpacity : 1;  // <-- see ApplyAccentPolicy
             _tintColor = useAcrylic ? tintColor : fallbackColor;
+
+            //
+            Theme_TrayApply();
+            //
         }
 
         private void Theme_ThemeChanged(object sender, EventArgs args)
