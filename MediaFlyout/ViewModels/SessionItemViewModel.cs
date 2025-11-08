@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace MediaFlyout.ViewModels
 {
@@ -34,8 +32,7 @@ namespace MediaFlyout.ViewModels
                     if (value != null)
                     {
                         ThumbnailSize = 48;
-                        _thumbnail = value;
-                        OnPropertyChanged();
+                        SetProperty(ref _thumbnail, value);
                     }
                     else
                     {
@@ -71,8 +68,7 @@ namespace MediaFlyout.ViewModels
             {
                 if (value != _appIcon)
                 {
-                    _appIcon = value;
-                    OnPropertyChanged();
+                    SetProperty(ref _appIcon, value);
                     if (Thumbnail == null)
                     {
                         SetAppIconAsThumbnail();
@@ -117,6 +113,10 @@ namespace MediaFlyout.ViewModels
 
         private void SetAppIconAsThumbnail()
         {
+            if (AppIcon == null)
+            {
+                return;
+            }
             Thumbnail = AppIcon;
             ThumbnailSize = 32;
         }
