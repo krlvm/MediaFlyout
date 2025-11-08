@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using MediaFlyout.Helpers;
+using MediaFlyout.Utilities;
 using static MediaFlyout.Interop.User32;
 
 namespace MediaFlyout.AppInformation
@@ -56,21 +57,22 @@ namespace MediaFlyout.AppInformation
                     return;
                 }
 
-                ProcessModule mainModule;
-                try
+                var processInfo = ProcessInfoExtractor.ExtractInfo(sourceProcess);
+                if (processInfo == null)
                 {
-                    mainModule = sourceProcess.MainModule;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                    return;
+                    return;   
                 }
 
-                DisplayName = mainModule.FileVersionInfo.FileDescription;
+                if (string.IsNullOrEmpty(processInfo.Value.description))
+                {
+                    DisplayName = Path.GetFileName(processInfo.Value.path);
+                }
+                else
+                {
+                    DisplayName = processInfo.Value.description;
+                }
 
-                var path = mainModule.FileName;
-                var ie = new IconExtractor(path);
+                var ie = new IconExtractor(processInfo.Value.path);
                 if (ie.Count == 0)
                 {
                     return;
