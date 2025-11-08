@@ -71,6 +71,11 @@ namespace MediaFlyout.AppInformation
 
                 var path = mainModule.FileName;
                 var ie = new IconExtractor(path);
+                if (ie.Count == 0)
+                {
+                    return;
+                }
+
                 var icon = ie.GetIcon(0);
                 var bitmap = icon.ToBitmap();
                 icon.Dispose();
