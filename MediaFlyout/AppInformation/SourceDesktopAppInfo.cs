@@ -44,7 +44,13 @@ namespace MediaFlyout.AppInformation
                 return;
             }
 
-            Activate();
+            // Opening the browser's main window is not a successful match: it may
+            // leave the user on an unrelated tab. Keep that fallback for ordinary
+            // desktop apps, but never use it for a browser media card.
+            if (!IsBrowserProcess())
+            {
+                Activate();
+            }
         }
 
         private bool TryActivateMatchingTab(string mediaTitle, string mediaArtist)
@@ -54,90 +60,176 @@ namespace MediaFlyout.AppInformation
                 return false;
             }
 
-            var windows = new List<IntPtr>();
+            var normalizedTitle = NormalizeTabName(mediaTitle);
+            if (normalizedTitle.Length < 3)
+            {
+                return false;
+            }
+            var normalizedArtist = NormalizeTabName(mediaArtist);
+
+            string processName;
             try
             {
-                foreach (ProcessThread thread in sourceProcess.Threads)
-                {
-                    EnumThreadWindows(thread.Id, (hWnd, lParam) =>
-                    {
-                        if (hWnd != IntPtr.Zero && !windows.Contains(hWnd))
-                        {
-                            windows.Add(hWnd);
-                        }
-                        return true;
-                    }, IntPtr.Zero);
-                }
+                processName = sourceProcess.ProcessName;
             }
             catch
             {
                 return false;
             }
 
-            if (windows.Count == 0 && sourceProcess.MainWindowHandle != IntPtr.Zero)
+            var browserProcesses = new List<Process>();
+            try
             {
-                windows.Add(sourceProcess.MainWindowHandle);
+                browserProcesses.AddRange(Process.GetProcessesByName(processName));
             }
-
-            var normalizedTitle = NormalizeTabName(mediaTitle);
-            if (normalizedTitle.Length < 3)
+            catch
             {
                 return false;
             }
 
-            var normalizedArtist = NormalizeTabName(mediaArtist);
             AutomationElement matchingTab = null;
             IntPtr matchingWindow = IntPtr.Zero;
-            var bestMatchScore = -1;
+            var bestMatchScore = int.MinValue;
+            var bestMatchIsSelected = false;
+            var ambiguousBestMatch = false;
 
-            foreach (var hWnd in windows)
+            try
             {
-                try
+                foreach (var process in browserProcesses)
                 {
-                    var root = AutomationElement.FromHandle(hWnd);
-                    var tabs = root.FindAll(TreeScope.Descendants,
-                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem));
-
-                    foreach (AutomationElement tab in tabs)
+                    var windows = new List<IntPtr>();
+                    try
                     {
-                        var tabName = NormalizeTabName(tab.Current.Name);
-                        if (tabName.Length < 3 || !tabName.Contains(normalizedTitle))
+                        foreach (ProcessThread thread in process.Threads)
                         {
-                            continue;
+                            EnumThreadWindows(thread.Id, (hWnd, lParam) =>
+                            {
+                                if (hWnd != IntPtr.Zero && !windows.Contains(hWnd))
+                                {
+                                    windows.Add(hWnd);
+                                }
+                                return true;
+                            }, IntPtr.Zero);
                         }
 
-                        var score = normalizedArtist.Length >= 3 && tabName.Contains(normalizedArtist) ? 2 : 1;
-                        if (score > bestMatchScore)
+                        if (process.MainWindowHandle != IntPtr.Zero && !windows.Contains(process.MainWindowHandle))
                         {
-                            bestMatchScore = score;
-                            matchingTab = tab;
-                            matchingWindow = hWnd;
+                            windows.Add(process.MainWindowHandle);
+                        }
+                    }
+                    catch
+                    {
+                        // Browser subprocesses can exit while the tab list is read.
+                        continue;
+                    }
+
+                    foreach (var hWnd in windows)
+                    {
+                        try
+                        {
+                            var root = AutomationElement.FromHandle(hWnd);
+                            var tabs = root.FindAll(TreeScope.Descendants,
+                                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem));
+
+                            foreach (AutomationElement tab in tabs)
+                            {
+                                try
+                                {
+                                    var tabName = NormalizeTabName(tab.Current.Name);
+                                    if (tabName.Length < 3 || !tabName.Contains(normalizedTitle))
+                                    {
+                                        continue;
+                                    }
+
+                                    var selection = tab.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                                    var isSelected = selection?.Current.IsSelected == true;
+                                    var score = 100 + Math.Min(normalizedTitle.Length, 100);
+                                    if (normalizedArtist.Length >= 3 && tabName.Contains(normalizedArtist)) score += 100;
+                                    if (tabName.Contains("audio playing") || tabName.Contains("playing audio")) score += 25;
+                                    if (isSelected) score += 10;
+
+                                    if (score > bestMatchScore)
+                                    {
+                                        bestMatchScore = score;
+                                        matchingTab = tab;
+                                        matchingWindow = hWnd;
+                                        bestMatchIsSelected = isSelected;
+                                        ambiguousBestMatch = false;
+                                    }
+                                    else if (score == bestMatchScore)
+                                    {
+                                        // Prefer the already-selected tab on an exact tie;
+                                        // otherwise refuse to open an arbitrary duplicate.
+                                        if (isSelected && !bestMatchIsSelected)
+                                        {
+                                            matchingTab = tab;
+                                            matchingWindow = hWnd;
+                                            bestMatchIsSelected = true;
+                                            ambiguousBestMatch = false;
+                                        }
+                                        else if (isSelected == bestMatchIsSelected)
+                                        {
+                                            ambiguousBestMatch = true;
+                                        }
+                                    }
+                                }
+                                catch
+                                {
+                                    // Individual tab accessibility nodes can become stale.
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // A browser window may close or rebuild its tab tree mid-scan.
                         }
                     }
                 }
-                catch
-                {
-                    // A browser window can disappear or change its accessibility tree while scanning.
-                }
             }
-
-            if (matchingTab != null)
+            finally
             {
-                try
+                foreach (var process in browserProcesses)
                 {
-                    ActivateWindow(matchingWindow);
-                    var selection = matchingTab.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
-                    selection?.Select();
-                    matchingTab.SetFocus();
-                    return true;
-                }
-                catch
-                {
-                    // The browser may rebuild its accessibility tree between lookup and activation.
+                    process.Dispose();
                 }
             }
 
-            return false;
+            if (matchingTab == null || ambiguousBestMatch || !IsWindow(matchingWindow))
+            {
+                return false;
+            }
+
+            try
+            {
+                var selection = matchingTab.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                if (selection == null)
+                {
+                    return false;
+                }
+
+                selection.Select();
+                ActivateWindow(matchingWindow);
+                matchingTab.SetFocus();
+                return true;
+            }
+            catch
+            {
+                // The browser may rebuild the accessibility node after lookup.
+                return false;
+            }
+        }
+
+        private bool IsBrowserProcess()
+        {
+            try
+            {
+                return new[] { "msedge", "chrome", "firefox", "opera", "brave", "vivaldi" }
+                    .Contains(sourceProcess?.ProcessName, StringComparer.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private static string NormalizeTabName(string value)
