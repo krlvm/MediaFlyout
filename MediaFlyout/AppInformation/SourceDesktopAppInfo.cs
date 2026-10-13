@@ -89,6 +89,7 @@ namespace MediaFlyout.AppInformation
 
             AutomationElement matchingTab = null;
             IntPtr matchingWindow = IntPtr.Zero;
+            int[] matchingRuntimeId = null;
             var bestMatchScore = int.MinValue;
             var bestMatchIsSelected = false;
             var ambiguousBestMatch = false;
@@ -153,6 +154,7 @@ namespace MediaFlyout.AppInformation
                                         bestMatchScore = score;
                                         matchingTab = tab;
                                         matchingWindow = hWnd;
+                                        matchingRuntimeId = tab.GetRuntimeId();
                                         bestMatchIsSelected = isSelected;
                                         ambiguousBestMatch = false;
                                     }
@@ -164,6 +166,7 @@ namespace MediaFlyout.AppInformation
                                         {
                                             matchingTab = tab;
                                             matchingWindow = hWnd;
+                                            matchingRuntimeId = tab.GetRuntimeId();
                                             bestMatchIsSelected = true;
                                             ambiguousBestMatch = false;
                                         }
@@ -194,27 +197,52 @@ namespace MediaFlyout.AppInformation
                 }
             }
 
-            if (matchingTab == null || ambiguousBestMatch || !IsWindow(matchingWindow))
+            if (matchingTab == null || matchingRuntimeId == null || ambiguousBestMatch || !IsWindow(matchingWindow))
             {
                 return false;
             }
 
+            var previousWindow = GetForegroundWindow();
             try
             {
-                var selection = matchingTab.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                // UI Automation may refuse to select a tab in a background browser.
+                // Bring the owning browser window forward first, then reacquire the
+                // tab because activation can rebuild the browser's automation tree.
+                ActivateWindow(matchingWindow);
+                var root = AutomationElement.FromHandle(matchingWindow);
+                var tabs = root.FindAll(TreeScope.Descendants,
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem));
+                AutomationElement currentTab = null;
+                foreach (AutomationElement tab in tabs)
+                {
+                    try
+                    {
+                        if (tab.GetRuntimeId().SequenceEqual(matchingRuntimeId))
+                        {
+                            currentTab = tab;
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore stale tab nodes while reacquiring the selected target.
+                    }
+                }
+
+                var selection = currentTab?.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
                 if (selection == null)
                 {
+                    if (IsWindow(previousWindow)) SetForegroundWindow(previousWindow);
                     return false;
                 }
 
                 selection.Select();
-                ActivateWindow(matchingWindow);
-                matchingTab.SetFocus();
+                currentTab.SetFocus();
                 return true;
             }
             catch
             {
-                // The browser may rebuild the accessibility node after lookup.
+                if (IsWindow(previousWindow)) SetForegroundWindow(previousWindow);
                 return false;
             }
         }

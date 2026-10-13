@@ -136,6 +136,9 @@ namespace MediaFlyout.Interop
         [DllImport("user32.dll")]
         internal static extern int SetForegroundWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll")]
+        internal static extern IntPtr GetForegroundWindow();
+
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool FlashWindow(IntPtr hWnd, bool bInvert);
 
