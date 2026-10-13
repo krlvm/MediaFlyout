@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MediaFlyout.Helpers
@@ -10,69 +7,33 @@ namespace MediaFlyout.Helpers
         public event MouseEventHandler Click;
         public event MouseEventHandler DoubleClick;
 
-        private CancellationTokenSource _pendingClick;
-        private MouseEventArgs _pendingClickArgs;
-        private bool _ignoreNextClick;
+        private MouseButtons _lastMouseButton;
+        private bool _ignoreNextMouseUp;
 
         public TrayClickListener(NotifyIcon notifyIcon)
         {
-            // NotifyIcon.Click is the reliable left-button event. MouseClick is
-            // retained for right and middle clicks, which carry button information.
-            notifyIcon.Click += Icon_OnClick;
-            notifyIcon.MouseClick += Icon_OnMouseClick;
+            notifyIcon.MouseUp += Icon_OnMouseUp;
             notifyIcon.DoubleClick += Icon_OnDoubleClick;
         }
 
-        private async void Icon_OnClick(object sender, EventArgs args)
+        private void Icon_OnMouseUp(object sender, MouseEventArgs args)
         {
-            if (_ignoreNextClick)
+            // WinForms raises DoubleClick on the second button-down and suppresses
+            // Click/MouseClick on the matching button-up. MouseUp still arrives.
+            if (_ignoreNextMouseUp)
             {
-                _ignoreNextClick = false;
+                _ignoreNextMouseUp = false;
                 return;
             }
 
-            _pendingClick?.Cancel();
-            var pendingClick = new CancellationTokenSource();
-            _pendingClick = pendingClick;
-            _pendingClickArgs = new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0);
-
-            try
-            {
-                // Allow Windows to report a double-click before treating this as
-                // a single-click request to open or dismiss the flyout.
-                await Task.Delay(SystemInformation.DoubleClickTime, pendingClick.Token);
-                if (ReferenceEquals(_pendingClick, pendingClick))
-                {
-                    _pendingClick = null;
-                    Click?.Invoke(this, _pendingClickArgs);
-                    _pendingClickArgs = null;
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // The double-click handler consumed this click.
-            }
-            finally
-            {
-                pendingClick.Dispose();
-            }
+            _lastMouseButton = args.Button;
+            Click?.Invoke(this, args);
         }
 
-        private void Icon_OnMouseClick(object sender, MouseEventArgs args)
+        private void Icon_OnDoubleClick(object sender, System.EventArgs args)
         {
-            if (args.Button != MouseButtons.Left)
-            {
-                Click?.Invoke(this, args);
-            }
-        }
-
-        private void Icon_OnDoubleClick(object sender, EventArgs args)
-        {
-            _ignoreNextClick = true;
-            _pendingClick?.Cancel();
-            _pendingClick = null;
-            DoubleClick?.Invoke(this, _pendingClickArgs ?? new MouseEventArgs(MouseButtons.Left, 2, 0, 0, 0));
-            _pendingClickArgs = null;
+            _ignoreNextMouseUp = true;
+            DoubleClick?.Invoke(this, new MouseEventArgs(_lastMouseButton, 2, 0, 0, 0));
         }
     }
 }
