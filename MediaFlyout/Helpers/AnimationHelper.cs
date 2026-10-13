@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 using MediaFlyout.Interop;
@@ -26,34 +26,37 @@ namespace MediaFlyout.Helpers
             double from, to;
 
             var taskbar = WindowsTaskbar.Current;
+            var dpi = WindowsTaskbar.Dpi;
+            var pixelToDip = dpi > 0 ? 96.0 / dpi : 1.0;
+            Func<double, double> toDip = pixels => pixels * pixelToDip;
 
             if (taskbar.IsHorizontal)
             {
                 property = Window.TopProperty;
-                window.Left = taskbar.ContainingScreen.Bounds.Right - window.Width + window.BorderThickness.Right;
+                window.Left = toDip(taskbar.ContainingScreen.Bounds.Right) - window.Width + window.BorderThickness.Right;
             }
             else
             {
                 property = Window.LeftProperty;
-                window.Top = taskbar.ContainingScreen.Bounds.Bottom - window.Height + window.BorderThickness.Bottom;
+                window.Top = toDip(taskbar.ContainingScreen.Bounds.Bottom) - window.Height + window.BorderThickness.Bottom;
             }
 
             switch (taskbar.Side)
             {
                 case WindowsTaskbar.Position.Bottom:
-                    from = taskbar.ContainingScreen.Bounds.Bottom;
-                    to = taskbar.Bottom - window.Height + window.BorderThickness.Bottom;
+                    from = toDip(taskbar.ContainingScreen.Bounds.Bottom);
+                    to = toDip(taskbar.Bottom) - window.Height + window.BorderThickness.Bottom;
                     break;
                 case WindowsTaskbar.Position.Top:
-                    from = taskbar.ContainingScreen.Bounds.Top;
-                    to = taskbar.Bottom - window.BorderThickness.Top;
+                    from = toDip(taskbar.ContainingScreen.Bounds.Top);
+                    to = toDip(taskbar.Bottom) - window.BorderThickness.Top;
                     break;
                 case WindowsTaskbar.Position.Left:
-                    from = taskbar.ContainingScreen.Bounds.Left;
-                    to = taskbar.ContainingScreen.WorkingArea.Left + window.BorderThickness.Left;
+                    from = toDip(taskbar.ContainingScreen.Bounds.Left);
+                    to = toDip(taskbar.ContainingScreen.WorkingArea.Left) + window.BorderThickness.Left;
                     break;
                 case WindowsTaskbar.Position.Right:
-                    from = taskbar.ContainingScreen.WorkingArea.Right;
+                    from = toDip(taskbar.ContainingScreen.WorkingArea.Right);
                     to = from - window.Width + window.BorderThickness.Right;
                     break;
                 default:
@@ -63,7 +66,7 @@ namespace MediaFlyout.Helpers
             if (Environment.OSVersion.IsWindows11())
             {
                 to -= 12;
-                window.Left = taskbar.Right - window.Width + window.BorderThickness.Right - 12;
+                window.Left = toDip(taskbar.Right) - window.Width + window.BorderThickness.Right - 12;
             }
 
             return new FlyoutAnimationScheme

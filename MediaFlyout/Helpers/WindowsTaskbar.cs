@@ -1,4 +1,4 @@
-﻿using MediaFlyout.Interop;
+using MediaFlyout.Interop;
 using System;
 using System.Windows;
 using System.Windows.Forms;
@@ -51,7 +51,7 @@ namespace MediaFlyout.Helpers
                     else
                     {
                         side = Position.Bottom;
-                        bottom = wk.Height;
+                        bottom = wk.Bottom;
                     }
                 }
                 else
@@ -65,7 +65,7 @@ namespace MediaFlyout.Helpers
                     else
                     {
                         side = Position.Right;
-                        right = wk.Width;
+                        right = wk.Right;
                     }
                 }
 
