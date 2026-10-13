@@ -21,8 +21,14 @@ Tray icon is hidden when there's no media is playing.
 ### Features
 * Middle Click or Double Click on tray icon to pause all media or play the last paused element
 * Right Click on tray icon to show flyout on top
+* Double-click a media card to activate its matching tab in supported browsers; for other desktop apps, the source application is activated
+* Remove a media session from the flyout with the **×** button; MediaFlyout requests the player to stop, and falls back to pause when stopping is unsupported
 * Supports showing accent color on surface
 * Fluent Design support, including acrylic transparency
+
+Media tab matching uses Windows UI Automation to compare the media title (and artist when available) with browser tab names. Browser accessibility support varies, and ambiguous or unavailable matches may not be activated. MediaFlyout does not include a browser extension.
+
+The flyout's taskbar positioning accounts for display scaling and taskbars placed on different screen edges. Tray icon click and double-click events are also handled separately so a double-click does not trigger the single-click action first.
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/krlvm/MediaFlyout/master/github-images/ui_light.png" alt="Flyout UI (Light)" style="width:45%" />
