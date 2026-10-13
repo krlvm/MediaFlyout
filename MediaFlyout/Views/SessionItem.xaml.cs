@@ -1,4 +1,4 @@
-﻿using MediaFlyout.AppInformation;
+using MediaFlyout.AppInformation;
 using MediaFlyout.Utilities;
 using MediaFlyout.ViewModels;
 using System;
@@ -32,10 +32,15 @@ namespace MediaFlyout.Views
             UpdateInfo();
         }
 
+        public GlobalSystemMediaTransportControlsSession Session => session;
+
         public void Invalidate()
         {
-            session.MediaPropertiesChanged -= Session_MediaPropertiesChanged;
-            session.PlaybackInfoChanged -= Session_PlaybackInfoChanged;
+            if (session != null)
+            {
+                session.MediaPropertiesChanged -= Session_MediaPropertiesChanged;
+                session.PlaybackInfoChanged -= Session_PlaybackInfoChanged;
+            }
             sourceInfo?.Dispose();
 
             sourceInfo = null;
@@ -132,6 +137,38 @@ namespace MediaFlyout.Views
         #endregion
 
         #region Buttons
+
+        private async void StopAndRemove_Click(object sender, RoutedEventArgs e)
+        {
+            if (session == null || flyout == null)
+            {
+                return;
+            }
+
+            var sessionToStop = session;
+            var owner = flyout;
+            StopAndRemove.IsEnabled = false;
+            owner.RemoveSession(this, sessionToStop);
+            try
+            {
+                var stopped = await sessionToStop.TryStopAsync();
+                if (!stopped)
+                {
+                    await sessionToStop.TryPauseAsync();
+                }
+            }
+            catch
+            {
+                try
+                {
+                    await sessionToStop.TryPauseAsync();
+                }
+                catch
+                {
+                    // Keep the card dismissed if the player rejects stop and pause.
+                }
+            }
+        }
 
         private async void Previous_Click(object sender, RoutedEventArgs e)
         {

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="MediaFlyout.Views.SessionItem"
+<UserControl x:Class="MediaFlyout.Views.SessionItem"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -16,6 +16,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -52,6 +53,7 @@
                 <Button x:Name="PlayPause" Content="{Binding ToggleButton, FallbackValue=''}" FontFamily="{DynamicResource IconFont}" FontSize="{DynamicResource ButtonPlaySize}" Width="40" IsEnabled="{Binding IsPlayPauseEnabled}" Click="PlayPause_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" />
                 <Button x:Name="Next" Content="{DynamicResource ButtonNext}" FontFamily="{DynamicResource IconFont}" FontSize="12" Width="40" IsEnabled="{Binding IsNextEnabled}" Click="Next_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" Margin="2,0,0,0" />
             </StackPanel>
+            <Button x:Name="StopAndRemove" Grid.Column="3" Content="×" FontSize="20" Width="32" Height="32" Padding="0" ToolTip="Stop playback and remove card" Click="StopAndRemove_Click" FocusVisualStyle="{StaticResource FluentFocusVisualStyle}" VerticalAlignment="Center" />
         </Grid>
     </StackPanel>
 </UserControl>

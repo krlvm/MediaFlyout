@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Threading;
 using Windows.Media.Control;
@@ -16,6 +17,7 @@ namespace MediaFlyout
     {
         private MediaFlyoutTray _mediaFlyoutTray;
         private GlobalSystemMediaTransportControlsSessionManager _smtc;
+        private readonly HashSet<GlobalSystemMediaTransportControlsSession> _dismissedSessions = new HashSet<GlobalSystemMediaTransportControlsSession>();
 
         public MediaFlyoutWindow() : base()
         {
@@ -94,6 +96,23 @@ namespace MediaFlyout
             _mediaFlyoutTray.SetStatus(SMTC_GetStatus());
         }
 
+        public void RemoveSession(SessionItem card, GlobalSystemMediaTransportControlsSession session)
+        {
+            _dismissedSessions.Add(session);
+            if (SessionsStackPanel.Children.Contains(card))
+            {
+                card.Invalidate();
+                SessionsStackPanel.Children.Remove(card);
+            }
+            foreach (var item in SessionsStackPanel.Children.OfType<SessionItem>()
+                .Where(item => item.Session == session).ToList())
+            {
+                item.Invalidate();
+                SessionsStackPanel.Children.Remove(item);
+            }
+            UpdateStatus();
+        }
+
         private void InvalidateSessions()
         {
             foreach (var item in SessionsStackPanel.Children)
@@ -106,9 +125,14 @@ namespace MediaFlyout
         private void UpdateSessions()
         {
             InvalidateSessions();
-            foreach (var session in _smtc.GetSessions())
+            var sessions = _smtc.GetSessions();
+            _dismissedSessions.RemoveWhere(dismissed => !sessions.Contains(dismissed));
+            foreach (var session in sessions)
             {
-                SessionsStackPanel.Children.Add(new SessionItem(this, session));
+                if (!_dismissedSessions.Contains(session))
+                {
+                    SessionsStackPanel.Children.Add(new SessionItem(this, session));
+                }
             }
         }
 
