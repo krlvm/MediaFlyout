@@ -143,8 +143,13 @@ namespace MediaFlyout
             UpdateSessions();
         }
 
-        private void FlyoutWindow_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void FlyoutWindow_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (e.ClickCount != 2)
+            {
+                return;
+            }
+
             // Double-clicking a playback button should perform only that button's action.
             if (e.OriginalSource is Button)
             {
