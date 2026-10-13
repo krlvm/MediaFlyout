@@ -201,7 +201,7 @@ namespace MediaFlyout.Views
                 return;
             }
 
-            sourceInfo?.Activate();
+            sourceInfo?.Activate(model.Title, model.Artist);
             e.Handled = true;
         }
 
@@ -230,7 +230,7 @@ namespace MediaFlyout.Views
             {
                 return;
             }
-            sourceInfo?.Activate();
+            sourceInfo?.Activate(model.Title, model.Artist);
         }
 
         #endregion

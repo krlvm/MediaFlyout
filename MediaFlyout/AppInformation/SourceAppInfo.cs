@@ -92,6 +92,12 @@ namespace MediaFlyout.AppInformation
         }
 
         public abstract void Activate();
+
+        public virtual void Activate(string mediaTitle, string mediaArtist)
+        {
+            Activate();
+        }
+
         public abstract void FetchInfosAsync();
 
         protected virtual void Disconnect() { }
