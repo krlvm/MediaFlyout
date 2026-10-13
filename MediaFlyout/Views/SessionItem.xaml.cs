@@ -34,6 +34,11 @@ namespace MediaFlyout.Views
 
         public GlobalSystemMediaTransportControlsSession Session => session;
 
+        public void ActivateSource()
+        {
+            sourceInfo?.Activate();
+        }
+
         public void Invalidate()
         {
             if (session != null)

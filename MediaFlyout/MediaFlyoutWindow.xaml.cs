@@ -10,6 +10,7 @@ using MediaFlyout.Flyout;
 using MediaFlyout.Extensions;
 using System.Threading.Tasks;
 using MediaFlyout.Models;
+using System.Windows.Controls;
 
 namespace MediaFlyout
 {
@@ -140,6 +141,37 @@ namespace MediaFlyout
         {
             UpdateStatus();
             UpdateSessions();
+        }
+
+        private void FlyoutWindow_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // Double-clicking a playback button should perform only that button's action.
+            if (e.OriginalSource is Button)
+            {
+                return;
+            }
+
+            var sessions = _smtc?.GetSessions();
+            if (sessions == null || sessions.Count == 0)
+            {
+                return;
+            }
+
+            var currentSession = _smtc.GetCurrentSession();
+            var playingSession = currentSession != null &&
+                currentSession.GetPlaybackInfo()?.PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing
+                    ? currentSession
+                    : sessions.FirstOrDefault(session =>
+                        session.GetPlaybackInfo()?.PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing);
+
+            if (playingSession == null)
+            {
+                return;
+            }
+
+            SessionsStackPanel.Children.OfType<SessionItem>()
+                .FirstOrDefault(item => item.Session == playingSession)
+                ?.ActivateSource();
         }
 
         #endregion
