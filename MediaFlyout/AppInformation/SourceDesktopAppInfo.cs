@@ -87,6 +87,16 @@ namespace MediaFlyout.AppInformation
                 return false;
             }
 
+            var previousWindow = GetForegroundWindow();
+            var initialBrowserWindow = IsWindow(Data.MainWindowHandle)
+                ? Data.MainWindowHandle : sourceProcess.MainWindowHandle;
+            if (IsWindow(initialBrowserWindow))
+            {
+                // Some browser accessibility providers expose the tab strip reliably
+                // only after their window becomes active.
+                ActivateWindow(initialBrowserWindow);
+            }
+
             AutomationElement matchingTab = null;
             IntPtr matchingWindow = IntPtr.Zero;
             int[] matchingRuntimeId = null;
@@ -199,10 +209,10 @@ namespace MediaFlyout.AppInformation
 
             if (matchingTab == null || matchingRuntimeId == null || ambiguousBestMatch || !IsWindow(matchingWindow))
             {
+                RestoreForegroundWindow(previousWindow);
                 return false;
             }
 
-            var previousWindow = GetForegroundWindow();
             try
             {
                 // UI Automation may refuse to select a tab in a background browser.
@@ -257,6 +267,14 @@ namespace MediaFlyout.AppInformation
             catch
             {
                 return false;
+            }
+        }
+
+        private static void RestoreForegroundWindow(IntPtr hWnd)
+        {
+            if (IsWindow(hWnd))
+            {
+                SetForegroundWindow(hWnd);
             }
         }
 
