@@ -10,7 +10,7 @@
         mc:Ignorable="d local p"
         Height="450" Width="450"
         fw:PointerTracker.Enabled="{DynamicResource FluentRevealEnabled}">
-    <Grid MouseLeftButtonDown="FlyoutWindow_MouseLeftButtonDown">
+    <Grid>
         <StackPanel Margin="0,8" x:Name="SessionsStackPanel" />
     </Grid>
 </flyout:FlyoutWindow>

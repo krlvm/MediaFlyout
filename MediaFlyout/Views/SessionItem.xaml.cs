@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Windows.Media.Control;
 
 namespace MediaFlyout.Views
@@ -33,11 +34,6 @@ namespace MediaFlyout.Views
         }
 
         public GlobalSystemMediaTransportControlsSession Session => session;
-
-        public void ActivateSource()
-        {
-            sourceInfo?.Activate();
-        }
 
         public void Invalidate()
         {
@@ -198,10 +194,30 @@ namespace MediaFlyout.Views
             await session.TrySkipNextAsync();
         }
 
-        private void SessionView_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void SessionView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.OriginalSource == ControlsContainer || e.Handled) return;
+            if (e.ClickCount != 2 || e.Handled || IsPlaybackButton(e.OriginalSource as DependencyObject))
+            {
+                return;
+            }
+
             sourceInfo?.Activate();
+            e.Handled = true;
+        }
+
+        private bool IsPlaybackButton(DependencyObject element)
+        {
+            while (element != null && element != this)
+            {
+                if (element is Button)
+                {
+                    return true;
+                }
+
+                element = VisualTreeHelper.GetParent(element);
+            }
+
+            return false;
         }
 
         private void SessionView_KeyUp(object sender, KeyEventArgs e)

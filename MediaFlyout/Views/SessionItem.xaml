@@ -11,7 +11,7 @@
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonRevealStyle}" />
     </UserControl.Resources>
 
-    <StackPanel Margin="8,6" MouseLeftButtonUp="SessionView_MouseLeftButtonUp" KeyUp="SessionView_KeyUp">
+    <StackPanel Margin="8,6" MouseLeftButtonDown="SessionView_MouseLeftButtonDown" KeyUp="SessionView_KeyUp">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64" />

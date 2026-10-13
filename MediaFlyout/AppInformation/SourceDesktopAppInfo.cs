@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MediaFlyout.Helpers;
 using MediaFlyout.Utilities;
@@ -42,9 +43,17 @@ namespace MediaFlyout.AppInformation
                     case SourceAppInfoDataType.FromAppUserModelId:
                         var processName = Data.AppUserModelId.Substring(0, Data.AppUserModelId.Length - 4);
                         var processes = Process.GetProcessesByName(processName);
-                        if (processes?.Length > 0)
+                        if (processes.Length > 0)
                         {
-                            sourceProcess = processes[0];
+                            sourceProcess = processes.FirstOrDefault(process => process.MainWindowHandle != IntPtr.Zero)
+                                ?? processes[0];
+                            foreach (var process in processes)
+                            {
+                                if (process != sourceProcess)
+                                {
+                                    process.Dispose();
+                                }
+                            }
                         }
                         break;
                     case SourceAppInfoDataType.FromProcessId:
